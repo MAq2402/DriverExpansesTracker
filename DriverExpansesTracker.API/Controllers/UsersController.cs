@@ -13,12 +13,12 @@ namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users")]
     [ValidateModel]
-    public class UserController:Controller
+    public class UsersController:Controller
     {
         private UserManager<User> _userManager;
         private SignInManager<User> _signInManager;
 
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public UsersController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;

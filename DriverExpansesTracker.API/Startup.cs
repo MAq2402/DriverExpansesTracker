@@ -99,6 +99,7 @@ namespace DriverExpansesTracker.API
             app.UseAuthentication();
 
             app.UseMvc();
+
         }
     }
 }
