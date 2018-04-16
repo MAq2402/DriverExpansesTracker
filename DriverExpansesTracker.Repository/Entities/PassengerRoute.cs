@@ -10,7 +10,6 @@ namespace DriverExpansesTracker.Repository.Entities
 {
     public class PassengerRoute:Entity
     {
-
         [Required,MaxLength(50)]
         public string Destination { get; set; }
         [Required, MaxLength(50)]

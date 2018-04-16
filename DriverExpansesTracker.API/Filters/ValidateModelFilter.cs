@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DriverExpansesTracker.API.Filters
 {
-    public class ValidateModel :Attribute ,IActionFilter
+    public class ValidateModelFilter :Attribute ,IActionFilter
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {

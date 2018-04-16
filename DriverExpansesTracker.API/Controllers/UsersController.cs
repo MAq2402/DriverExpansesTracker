@@ -2,6 +2,7 @@
 using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Services.Models.User;
+using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,39 +13,39 @@ using System.Threading.Tasks;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users")]
-    [ValidateModel]
+    [ValidateModelFilter]
     public class UsersController:Controller
     {
         private UserManager<User> _userManager;
         private SignInManager<User> _signInManager;
+        private IUserService _userService;
+        private IAppService _appService;
 
-        public UsersController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public UsersController(UserManager<User> userManager, SignInManager<User> signInManager,IUserService userService,IAppService appService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userService = userService;
+            _appService = appService;
         }
         [HttpGet]
         public IActionResult GetUsers()
         {
-            var users = _userManager.Users;
-
-            var usersToReturn = Mapper.Map<IEnumerable<UserDto>>(users);
-
-            return Ok(usersToReturn);
+            var users = _userService.GetUsers();
+        
+            return Ok(users);
         }
         [HttpGet("{userName}",Name ="GetUserByName")]
-        public async Task<IActionResult> GetUserByName(string userName)
+        public IActionResult GetUserByName(string userName)
         {
-            var user =  await _userManager.FindByNameAsync(userName);
+            var user = _userService.GetUserByName(userName);
 
             if(user==null)
             {
                 return NotFound();
             }
 
-            var userToReturn = Mapper.Map<UserDto>(user);
-
-            return Ok(userToReturn);
+            return Ok(user);
         }
 
         [HttpPost()]
@@ -63,6 +64,26 @@ namespace DriverExpansesTracker.API.Controllers
 
             return CreatedAtRoute("GetUserByName",new { userName = userToReturn.UserName },userToReturn);
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] LoginDto credentials)
+        {
+
+            if(credentials==null)
+            {
+                return BadRequest();
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(credentials.UserName, credentials.Password, false, false);
+
+            if(!result.Succeeded)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
+
+        }
         [HttpGet("currentIdentity")]
         public async Task<IActionResult> GetCurrentIdentity()
         {
@@ -80,6 +101,25 @@ namespace DriverExpansesTracker.API.Controllers
             var currentIdentityToReturn = Mapper.Map<UserDto>(currentIdentity);
 
             return Ok(currentIdentityToReturn);
+        }
+        [HttpDelete("{userName}")]
+        public IActionResult RemoveUser(string userName)
+        {
+            var user = _userService.GetUserByName(userName);
+
+            if(user==null)
+            {
+                return NotFound();
+            }
+
+            _userService.RemoveUser(userName);
+
+            if(!_appService.Save())
+            {
+                throw new Exception("Could not save to Db");
+            }
+
+            return NoContent();
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace DriverExpansesTracker.Repository.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : Entity
+    public class Repository<T> :IRepository<T> where T : class
     {
         private AppDbContext _context;
 
@@ -36,10 +36,6 @@ namespace DriverExpansesTracker.Repository.Repositories
             return _context.Set<T>();
         }
 
-        public virtual T GetById(int id)
-        {
-            return _context.Set<T>().FirstOrDefault(t => t.Id == id);
-        }
 
         public bool Save()
         {

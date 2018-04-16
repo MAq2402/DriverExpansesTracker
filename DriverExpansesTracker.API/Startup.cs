@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DriverExpansesTracker.Repository.Entities;
+using DriverExpansesTracker.Repository.Repositories;
+using DriverExpansesTracker.Services.Services;
 using DriveTracker.DbContexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -73,6 +75,12 @@ namespace DriverExpansesTracker.API
                     Title = "DriverExpansesTracker", Version = "v1"
                 });
             });
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository.Repositories.Repository<>));
+            services.AddScoped<IAppService, AppService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICarService, CarService>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,6 +96,8 @@ namespace DriverExpansesTracker.API
                 cfg.CreateMap<DriverExpansesTracker.Repository.Entities.User, DriverExpansesTracker.Services.Models.User.UserDto>();
                 cfg.CreateMap<DriverExpansesTracker.Services.Models.User.UserForCreationDto, DriverExpansesTracker.Repository.Entities.User>()
                    .ForMember(dest=>dest.PasswordHash,opt=>opt.Ignore());
+
+                cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Car, DriverExpansesTracker.Services.Models.Car.CarDto>();
             });
 
             app.UseSwagger();

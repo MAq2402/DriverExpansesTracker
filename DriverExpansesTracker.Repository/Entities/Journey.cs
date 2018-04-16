@@ -15,7 +15,6 @@ namespace DriverExpansesTracker.Repository.Entities
             DateTime = DateTime.Now;
         }
 
-
         [Required,MaxLength(50)]
         public string Destination { get; set; }
 
