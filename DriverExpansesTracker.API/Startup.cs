@@ -80,6 +80,7 @@ namespace DriverExpansesTracker.API
             services.AddScoped<IAppService, AppService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICarService, CarService>();
+            services.AddScoped<IJourneyService, JourneyService>();
             
         }
 
@@ -98,6 +99,9 @@ namespace DriverExpansesTracker.API
                    .ForMember(dest=>dest.PasswordHash,opt=>opt.Ignore());
 
                 cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Car, DriverExpansesTracker.Services.Models.Car.CarDto>();
+                cfg.CreateMap<DriverExpansesTracker.Services.Models.Car.CarForCreationDto, DriverExpansesTracker.Repository.Entities.Car>();
+
+                cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Journey, DriverExpansesTracker.Services.Models.Journey.JourneyDto>();
             });
 
             app.UseSwagger();

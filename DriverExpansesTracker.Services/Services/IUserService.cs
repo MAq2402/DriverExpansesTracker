@@ -11,7 +11,8 @@ namespace DriverExpansesTracker.Services.Services
     {
         IEnumerable<UserDto> GetUsers();
         UserDto GetUserByName(string name);
-        bool UserExists(string name);
+        UserDto GetUserById(string id);
+        bool UserExists(string id);
         void RemoveUser(string name);
     }
 }

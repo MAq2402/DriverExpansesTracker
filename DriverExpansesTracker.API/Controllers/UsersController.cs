@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users")]
-    [ValidateModelFilter]
+
     public class UsersController:Controller
     {
         private UserManager<User> _userManager;
@@ -48,7 +48,21 @@ namespace DriverExpansesTracker.API.Controllers
             return Ok(user);
         }
 
+        //[HttpGet("{id}", Name = "GetUserById")]
+        //public IActionResult GetUserById(string id)
+        //{
+        //    var user = _userService.GetUserById(id);
+
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(user);
+        //}
+
         [HttpPost()]
+        [ValidateModelFilter]
         public async Task<IActionResult> CreateUser([FromBody] UserForCreationDto userFromBody)
         {
             var userToSave = Mapper.Map<User>(userFromBody);
@@ -66,13 +80,9 @@ namespace DriverExpansesTracker.API.Controllers
         }
 
         [HttpPost("login")]
+        [ValidateModelFilter]
         public async Task<IActionResult> LoginUser([FromBody] LoginDto credentials)
         {
-
-            if(credentials==null)
-            {
-                return BadRequest();
-            }
 
             var result = await _signInManager.PasswordSignInAsync(credentials.UserName, credentials.Password, false, false);
 

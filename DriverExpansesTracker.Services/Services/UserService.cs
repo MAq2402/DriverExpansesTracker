@@ -20,6 +20,12 @@ namespace DriverExpansesTracker.Services.Services
             _userRepository = userRepository;
         }
 
+        public UserDto GetUserById(string id)
+        {
+            var user = _userRepository.FindBy(u => u.Id == id).FirstOrDefault();
+            return Mapper.Map<UserDto>(user);
+        }
+
         public UserDto GetUserByName(string name)
         {
             var user = _userRepository.FindBy(u => u.UserName == name).FirstOrDefault();
@@ -39,9 +45,9 @@ namespace DriverExpansesTracker.Services.Services
         }
 
 
-        public bool UserExists(string name)
+        public bool UserExists(string id)
         {
-            if(_userRepository.FindBy(u=>u.UserName==name).Any())
+            if(_userRepository.FindBy(u=>u.Id==id).Any())
             {
                 return true;
             }

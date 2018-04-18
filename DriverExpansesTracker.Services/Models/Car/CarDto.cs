@@ -7,7 +7,7 @@ namespace DriverExpansesTracker.Services.Models.Car
     public class CarDto
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string Name { get; set; }
         public double FuelConsumption100km { get; set; }
         public string FuelType { get; set; }
