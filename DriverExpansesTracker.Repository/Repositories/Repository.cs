@@ -29,7 +29,12 @@ namespace DriverExpansesTracker.Repository.Repositories
         public virtual IQueryable<T> FindBy(Expression<Func<T, bool>> predicate)
         {
             return _context.Set<T>().Where(predicate);
-        }      
+        }
+
+        public T FindSingleBy(Expression<Func<T, bool>> predicate)
+        {
+            return _context.Set<T>().FirstOrDefault(predicate);
+        }
 
         public virtual IQueryable<T> GetAll()
         {

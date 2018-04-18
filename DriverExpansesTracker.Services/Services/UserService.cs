@@ -34,7 +34,7 @@ namespace DriverExpansesTracker.Services.Services
 
         public void RemoveUser(string name)
         {
-            var user = _userRepository.FindBy(u => u.UserName == name).FirstOrDefault();
+            var user = _userRepository.FindSingleBy(u => u.UserName == name);
             _userRepository.Delete(user);
         }
 
