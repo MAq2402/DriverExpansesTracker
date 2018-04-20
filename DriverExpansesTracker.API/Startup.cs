@@ -81,6 +81,8 @@ namespace DriverExpansesTracker.API
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<IJourneyService, JourneyService>();
+            services.AddScoped<IPassengerRouteService, PassengerRouteService>();
+            services.AddScoped<IPaymentService, PaymentService>();
             
         }
 
@@ -102,6 +104,11 @@ namespace DriverExpansesTracker.API
                 cfg.CreateMap<DriverExpansesTracker.Services.Models.Car.CarForCreationDto, DriverExpansesTracker.Repository.Entities.Car>();
 
                 cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Journey, DriverExpansesTracker.Services.Models.Journey.JourneyDto>();
+                cfg.CreateMap<DriverExpansesTracker.Services.Models.Journey.JourneyForCreationDto, DriverExpansesTracker.Repository.Entities.Journey>();
+
+                cfg.CreateMap<DriverExpansesTracker.Repository.Entities.PassengerRoute, DriverExpansesTracker.Services.Models.PassengerRoute.PassengerRouteDto>();
+
+                cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Payment, DriverExpansesTracker.Services.Models.Payment.PaymentDto>();
             });
 
             app.UseSwagger();

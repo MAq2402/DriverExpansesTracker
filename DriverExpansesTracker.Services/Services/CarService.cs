@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using AutoMapper;
 using DriverExpansesTracker.Repository.Entities;
@@ -17,7 +18,7 @@ namespace DriverExpansesTracker.Services.Services
             _carRepository = carRepository;
         }
 
-        public CarDto AddCarForUser(CarForCreationDto car, string userId)
+        public CarDto AddCar(CarForCreationDto car, string userId)
         {
             var carToSave = Mapper.Map<Car>(car);
             carToSave.UserId = userId;
@@ -32,14 +33,23 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<CarDto>(carToSave);
         }
 
-        public CarDto GetCarForUser(string userId, int id)
+        public bool CarExists(string userId, int carId)
+        {
+            if(_carRepository.FindBy(c=>c.UserId==userId&&c.Id==carId).Any())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public CarDto GetCar(string userId, int id)
         {
             var car = _carRepository.FindSingleBy(c => c.Id == id && c.UserId == userId);
 
             return Mapper.Map<CarDto>(car);
         }
 
-        public IEnumerable<CarDto> GetCarsForUser(string userId)
+        public IEnumerable<CarDto> GetCars(string userId)
         {
             var cars = _carRepository.FindBy(c=>c.UserId == userId);
 

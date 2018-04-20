@@ -7,8 +7,9 @@ namespace DriverExpansesTracker.Services.Services
 {
     public interface ICarService
     {
-        CarDto GetCarForUser(string userId, int id);
-        IEnumerable<CarDto> GetCarsForUser(string userId);
-        CarDto AddCarForUser(CarForCreationDto car, string userId);
+        CarDto GetCar(string userId, int id);
+        IEnumerable<CarDto> GetCars(string userId);
+        CarDto AddCar(CarForCreationDto car, string userId);
+        bool CarExists(string userId, int carId);
     }
 }

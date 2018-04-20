@@ -3,20 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriverExpansesTracker.API", "DriverExpansesTracker.API\DriverExpansesTracker.API.csproj", "{ED9FF6FE-DC0D-4D5D-BA8F-1897D9EC464C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.API", "DriverExpansesTracker.API\DriverExpansesTracker.API.csproj", "{ED9FF6FE-DC0D-4D5D-BA8F-1897D9EC464C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C336A12D-2BB3-491E-9BED-1B7BC01D74DA} = {C336A12D-2BB3-491E-9BED-1B7BC01D74DA}
 		{611C26F7-D5D0-4E43-913B-F93E765182D9} = {611C26F7-D5D0-4E43-913B-F93E765182D9}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrontEnd", "FrontEnd", "{BFC526C6-53FF-41E5-8C55-82043E68ECC7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DriverExpansesTracker.FrontEnd", "DriverExpansesTracker.FrontEnd", "{BFC526C6-53FF-41E5-8C55-82043E68ECC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriverExpansesTracker.Services", "DriverExpansesTracker.Services\DriverExpansesTracker.Services.csproj", "{611C26F7-D5D0-4E43-913B-F93E765182D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.Services", "DriverExpansesTracker.Services\DriverExpansesTracker.Services.csproj", "{611C26F7-D5D0-4E43-913B-F93E765182D9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C336A12D-2BB3-491E-9BED-1B7BC01D74DA} = {C336A12D-2BB3-491E-9BED-1B7BC01D74DA}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriverExpansesTracker.Repository", "DriverExpansesTracker.Repository\DriverExpansesTracker.Repository.csproj", "{C336A12D-2BB3-491E-9BED-1B7BC01D74DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.Repository", "DriverExpansesTracker.Repository\DriverExpansesTracker.Repository.csproj", "{C336A12D-2BB3-491E-9BED-1B7BC01D74DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

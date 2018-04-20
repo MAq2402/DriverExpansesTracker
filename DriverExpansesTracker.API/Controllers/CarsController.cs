@@ -30,7 +30,7 @@ namespace DriverExpansesTracker.API.Controllers
                 return NotFound();
             }
 
-            var cars = _carService.GetCarsForUser(userId);
+            var cars = _carService.GetCars(userId);
 
             return Ok(cars);
         }
@@ -43,7 +43,7 @@ namespace DriverExpansesTracker.API.Controllers
                 return NotFound();
             }
 
-            var car = _carService.GetCarForUser(userId, id);
+            var car = _carService.GetCar(userId, id);
 
             if(car==null)
             {
@@ -62,7 +62,7 @@ namespace DriverExpansesTracker.API.Controllers
                 return NotFound();
             }
 
-            var carToRetrun = _carService.AddCarForUser(carFromBody, userId);
+            var carToRetrun = _carService.AddCar(carFromBody, userId);
 
             return CreatedAtRoute("GetCar", new { userId = userId, id = carToRetrun.Id }, carToRetrun);
 
