@@ -14,11 +14,13 @@ namespace DriverExpansesTracker.API.Controllers
     {
         private IPassengerRouteService _passengerRouteService;
         private IUserService _userService;
+        private IJourneyService _journeyService;
 
-        public PassengerRoutesController(IPassengerRouteService passengerRouteService, IUserService userService)
+        public PassengerRoutesController(IPassengerRouteService passengerRouteService, IUserService userService,IJourneyService journeyService)
         {
             _passengerRouteService = passengerRouteService;
             _userService = userService;
+            _journeyService = journeyService;
         }
 
         [HttpGet]
@@ -27,19 +29,22 @@ namespace DriverExpansesTracker.API.Controllers
 
         public IActionResult GetPassengerRoutes(string userId, int? journeyId)
         {
-            if (!_userService.UserExists(userId))
-            {
-                return NotFound();
-            }
-
             if (journeyId != null)
             {
+                if(!_journeyService.JourneyExists(userId,(int)journeyId))
+                {
+                    return NotFound();
+                }
                 var routes = _passengerRouteService.GetRoutes(userId, (int)journeyId);
 
                 return Ok(routes);
             }
             else
             {
+                if (!_userService.UserExists(userId))
+                {
+                    return NotFound();
+                }
                 var routes = _passengerRouteService.GetRoutes(userId);
 
                 return Ok(routes);
@@ -51,13 +56,15 @@ namespace DriverExpansesTracker.API.Controllers
         [Route("journeys/{journeyId}/passengerRoutes/{id}")]
         public IActionResult GetPassengerRoute(string userId, int id,  int? journeyId)
         {
-            if (!_userService.UserExists(userId))
-            {
-                return NotFound();
-            }
+            
 
             if (journeyId != null)
             {
+
+                if (!_journeyService.JourneyExists(userId, (int)journeyId))
+                {
+                    return NotFound();
+                }
                 var route = _passengerRouteService.GetRoute(userId, (int)journeyId,id);
 
                 if(route==null)
@@ -69,6 +76,10 @@ namespace DriverExpansesTracker.API.Controllers
             }
             else
             {
+                if (!_userService.UserExists(userId))
+                {
+                    return NotFound();
+                }
                 var route = _passengerRouteService.GetRoute(userId,id);
 
                 if (route == null)

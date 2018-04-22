@@ -11,5 +11,6 @@ namespace DriverExpansesTracker.Services.Services
         IEnumerable<JourneyDto> GetJourneys(string userId, int carId);
         JourneyDto GetJourney(string userId, int id);
         JourneyDto GetJourney(string userId, int carId, int id);
+        bool JourneyExists(string userId, int id);
     }
 }

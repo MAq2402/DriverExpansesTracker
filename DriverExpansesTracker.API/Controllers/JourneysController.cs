@@ -98,46 +98,46 @@ namespace DriverExpansesTracker.API.Controllers
         //[HttpPost, Route("journeys")]
         //public IActionResult CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, int userId)
         //{
-            //czy car istnieje
+        //    //czu car istnieje
 
-            //var routes = Mapper.Map<IEnumerable<PassengerRoute>>(journeyFromBody.Routes);
+        //    var routes = Mapper.Map<IEnumerable<PassengerRoute>>(journeyFromBody.Routes);
 
-            //if (!_passengerRouteRepository.UsersExistForRoutes(routes))
-            //{
-            //    return BadRequest();
-            //}
+        //    if (!_passengerRouteRepository.UsersExistForRoutes(routes))
+        //    {
+        //        return BadRequest();
+        //    }
 
-            //if (_passengerRouteService.SameUserForRoutes(routes))
-            //{
-            //    return BadRequest();
-            //}
+        //    if (_passengerRouteService.SameUserForRoutes(routes))
+        //    {
+        //        return BadRequest();
+        //    }
 
-            //_passengerRouteRepository.SetUsersForRoutes(routes);
+        //    _passengerRouteRepository.SetUsersForRoutes(routes);
 
-            //var journey = Mapper.Map<Journey>(journeyFromBody);
+        //    var journey = Mapper.Map<Journey>(journeyFromBody);
 
-            //journey.PassengerRoutes.AddRange(routes);
+        //    journey.PassengerRoutes.AddRange(routes);
 
-            //_journeyService.GiveTotalPrices(journey, (double)journeyFromBody.PriceForLiter, car.FuelConsumption100km);
+        //    _journeyService.GiveTotalPrices(journey, (double)journeyFromBody.PriceForLiter, car.FuelConsumption100km);
 
-            //var payments = _paymentService.GeneratePayments(journey, userId);
+        //    var payments = _paymentService.GeneratePayments(journey, userId);
 
-            //_userService.EditUsersPaymentStatistics(payments, userId);
+        //    _userService.EditUsersPaymentStatistics(payments, userId);
 
-            //notification service albo repozytorium wysle notyfikacje 
+        //    //notification service albo repozytorium wysle notyfikacje
 
-            //_journeyRepository.AddJourneyForUserAndCar(userId, carId, journey);
+        //    _journeyRepository.AddJourneyForUserAndCar(userId, carId, journey);
 
-            //_paymentRepository.AddPayments(payments);
+        //    _paymentRepository.AddPayments(payments);
 
-            //if (!_appRepository.Commit())
-            //{
-            //    return InternalServerError();
-            //}
+        //    if (!_appRepository.Commit())
+        //    {
+        //        return InternalServerError();
+        //    }
 
-            //var journeyToReturn = Mapper.Map<JourneyDto>(journey);
+        //    var journeyToReturn = Mapper.Map<JourneyDto>(journey);
 
-            //return CreatedAtRoute("GetJourneyForUserAndCar", new { userId = userId, id = journey.Id, passengerRoutes = true, carId = carId }, journeyToReturn);
+        //    return CreatedAtRoute("GetJourneyForUserAndCar", new { userId = userId, id = journey.Id, passengerRoutes = true, carId = carId }, journeyToReturn);
 
         //}
     }

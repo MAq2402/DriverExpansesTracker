@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,69 +15,90 @@ namespace DriverExpansesTracker.API.Controllers
     {
         private IUserService _userService;
         private IPaymentService _paymentService;
+        private IJourneyService _journeyService;
 
-        public PaymentsController(IUserService userService,IPaymentService paymentService)
+        public PaymentsController(IUserService userService, IPaymentService paymentService,IJourneyService journeyService)
         {
             _userService = userService;
             _paymentService = paymentService;
+            _journeyService = journeyService;
         }
 
         [HttpGet]
         [Route("payments")]
         [Route("journeys/{journeyId}/payments")]
-        public IActionResult GetPayments(string userId,int?journeyId)
+        public IActionResult GetPayments(string userId,int ?journeyId)
         {
-            if(!_userService.UserExists(userId))
+            
+            if (journeyId != null)
             {
-                return NotFound();
-            }
-
-            if(journeyId!=null)
-            {
-                var payments = _paymentService.GetPayments(userId, (int)journeyId);
+                if(!_journeyService.JourneyExists(userId,(int)journeyId))
+                {
+                    return NotFound();
+                }
+                var payments = _paymentService.GetPayments(userId,(int)journeyId);
 
                 return Ok(payments);
             }
             else
             {
+                if (!_userService.UserExists(userId))
+                {
+                    return NotFound();
+                }
                 var payments = _paymentService.GetPayments(userId);
 
                 return Ok(payments);
+
+            }
+            
+
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public IActionResult GetPayment(string userId, int id,int? journeyId)
+        {
+            if (!_userService.UserExists(userId))
+            {
+                return NotFound();
+            }
+
+
+            if (journeyId != null)
+            {
+                if (!_journeyService.JourneyExists(userId, (int)journeyId))
+                {
+                    return NotFound();
+                }
+
+                var payment = _paymentService.GetPayment(userId, (int)journeyId,id);
+
+                if (payment == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(payment);
+            }
+            else
+            {
+                if (!_userService.UserExists(userId))
+                {
+                    return NotFound();
+                }
+
+                var payment = _paymentService.GetPayment(userId, id);
+
+                if (payment == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(payment);
             }
             
         }
 
-        //[HttpGet]
-        //[Route("payments/{id}")]
-        //[Route("journeys/{journeyId}/payments/{id}")]
-        //public IActionResult GetPayment(string userId,int id ,int? journeyId)
-        //{
-
-        //}
-
-        //// GET api/<controller>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST api/<controller>
-        //[HttpPost]
-        //public void Post([FromBody]string value)
-        //{
-        //}
-
-        //// PUT api/<controller>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody]string value)
-        //{
-        //}
-
-        //// DELETE api/<controller>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

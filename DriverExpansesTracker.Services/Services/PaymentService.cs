@@ -1,12 +1,15 @@
-﻿using DriverExpansesTracker.Repository.Entities;
+﻿using AutoMapper;
+using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
+using DriverExpansesTracker.Services.Models.Payment;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DriverExpansesTracker.Services.Services
 {
-    public class PaymentService:IPaymentService
+    public class PaymentService : IPaymentService
     {
         private IRepository<Payment> _paymentRepository;
 
@@ -15,14 +18,34 @@ namespace DriverExpansesTracker.Services.Services
             _paymentRepository = paymentRepository;
         }
 
-        public object GetPayments(string userId, int journeyId)
+        public PaymentDto GetPayment(string userId, int id)
         {
-            throw new NotImplementedException();
+            var payment = _paymentRepository.FindSingleBy(p => p.Id == id && (p.ReceiverId == userId || p.PayerId == userId));
+
+            return Mapper.Map<PaymentDto>(payment);
         }
 
-        public object GetPayments(string userId)
+        public PaymentDto GetPayment(string userId, int journeyId, int id)
         {
-            throw new NotImplementedException();
+            var payment = _paymentRepository.FindSingleBy(p => p.Id == id && p.JourneyId==journeyId && (p.ReceiverId == userId || p.PayerId == userId));
+
+            return Mapper.Map<PaymentDto>(payment);
+        }
+
+        public IEnumerable<PaymentDto> GetPayments(string userId)
+        {
+            var payments = _paymentRepository.FindBy(p => p.ReceiverId == userId || p.PayerId == userId)
+                                              .OrderByDescending(p => p.DateTime);
+
+            return Mapper.Map<IEnumerable<PaymentDto>>(payments);
+        }
+
+        public IEnumerable<PaymentDto> GetPayments(string userId, int journeyId)
+        {
+            var payments = _paymentRepository.FindBy(p => p.JourneyId==journeyId&&( p.ReceiverId == userId || p.PayerId == userId))
+                                               .OrderByDescending(p => p.DateTime);
+
+            return Mapper.Map<IEnumerable<PaymentDto>>(payments);
         }
     }
 }

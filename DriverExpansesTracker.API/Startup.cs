@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
 using DriverExpansesTracker.Services.Services;
@@ -83,6 +84,8 @@ namespace DriverExpansesTracker.API
             services.AddScoped<IJourneyService, JourneyService>();
             services.AddScoped<IPassengerRouteService, PassengerRouteService>();
             services.AddScoped<IPaymentService, PaymentService>();
+
+            services.AddScoped<ValidateIfUserExists>();
             
         }
 

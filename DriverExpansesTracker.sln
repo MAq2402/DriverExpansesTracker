@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.Repository", "DriverExpansesTracker.Repository\DriverExpansesTracker.Repository.csproj", "{C336A12D-2BB3-491E-9BED-1B7BC01D74DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriverExpansesTracker.Services.Tests", "DriverExpansesTracker.Services.Tests\DriverExpansesTracker.Services.Tests.csproj", "{2600EC1D-DD9C-45AA-8391-6019DAA76F63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{C336A12D-2BB3-491E-9BED-1B7BC01D74DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C336A12D-2BB3-491E-9BED-1B7BC01D74DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C336A12D-2BB3-491E-9BED-1B7BC01D74DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2600EC1D-DD9C-45AA-8391-6019DAA76F63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2600EC1D-DD9C-45AA-8391-6019DAA76F63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2600EC1D-DD9C-45AA-8391-6019DAA76F63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2600EC1D-DD9C-45AA-8391-6019DAA76F63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

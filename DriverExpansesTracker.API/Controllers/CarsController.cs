@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}/cars")]
+    //[ServiceFilter(typeof(ValidateIfUserExists))]
     public class CarsController : Controller
     {
         private ICarService _carService;
