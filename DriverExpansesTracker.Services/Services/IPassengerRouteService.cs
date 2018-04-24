@@ -11,5 +11,7 @@ namespace DriverExpansesTracker.Services.Services
         IEnumerable<PassengerRouteDto> GetRoutes(string userId, int journeyId);
         PassengerRouteDto GetRoute(string userId, int journeyId, int id);
         PassengerRouteDto GetRoute(string userId, int id);
+        bool RoutesUsersExist(IEnumerable<PassengerRouteForCreationDto> routes);
+        bool SameUserForMultipleRoutes(IEnumerable<PassengerRouteForCreationDto> routes);
     }
 }

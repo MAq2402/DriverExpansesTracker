@@ -12,10 +12,12 @@ namespace DriverExpansesTracker.Services.Services
     public class PassengerRouteService : IPassengerRouteService
     {
         private IRepository<PassengerRoute> _routeRepository;
+        private IRepository<User> _userRepository;
 
-        public PassengerRouteService(IRepository<PassengerRoute> routeRepository)
+        public PassengerRouteService(IRepository<PassengerRoute> routeRepository,IRepository<User> userRepository)
         {
             _routeRepository = routeRepository;
+            _userRepository = userRepository;
         }
 
         public IEnumerable<PassengerRouteDto> GetRoutes(string userId)
@@ -44,6 +46,37 @@ namespace DriverExpansesTracker.Services.Services
             var route = _routeRepository.FindSingleBy(r => r.UserId == userId && r.Id == id);
 
             return Mapper.Map<PassengerRouteDto>(route);
+        }
+
+        public bool RoutesUsersExist(IEnumerable<PassengerRouteForCreationDto> routes)
+        {       
+            var users = _userRepository.GetAll();
+
+            foreach (var route in routes)
+            {
+                if (users.Any(u=>u.Id==route.UserId))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool SameUserForMultipleRoutes(IEnumerable<PassengerRouteForCreationDto> routes)
+        {
+            var userIds = new List<string>();
+
+            foreach (var route in routes)
+            {
+
+                if (userIds.Any(x => x == route.UserId))
+                {
+                    return true;
+                }
+
+                userIds.Add(route.UserId);
+            }
+            return false;
         }
     }
 }

@@ -14,5 +14,6 @@ namespace DriverExpansesTracker.Services.Services
         UserDto GetUserById(string id);
         bool UserExists(string id);
         void RemoveUser(string name);
+        void EditUsersPaymentStatistics(string receiverId, IEnumerable<Payment> payments);
     }
 }

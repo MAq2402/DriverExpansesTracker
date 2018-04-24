@@ -16,12 +16,20 @@ namespace DriverExpansesTracker.API.Controllers
         private IUserService _userService;
         private IJourneyService _journeyService;
         private ICarService _carService;
+        private IPassengerRouteService _passengerRouteService;
+        private IPaymentService _paymentService;
 
-        public JourneysController(IUserService userService, IJourneyService journeyService, ICarService carService)
+        public JourneysController(IUserService userService,
+            IJourneyService journeyService,
+            ICarService carService,
+            IPassengerRouteService passengerRouteService,
+            IPaymentService paymentService)
         {
             _userService = userService;
             _journeyService = journeyService;
             _carService = carService;
+            _passengerRouteService = passengerRouteService;
+            _paymentService = paymentService;
         }
         [HttpGet]
         [Route("cars/{carId}/journeys")]
@@ -56,7 +64,7 @@ namespace DriverExpansesTracker.API.Controllers
             }
         }
         [HttpGet]
-        [Route("cars/{carId}/journeys/{id}", Name = "GetJourneyForUserAndCar")]
+        [Route("cars/{carId}/journeys/{id}", Name = "GetJourney")]
         [Route("journeys/{id}")]
         public IActionResult GetJourney(string userId, int id, int? carId = null)
         {
@@ -95,51 +103,33 @@ namespace DriverExpansesTracker.API.Controllers
             }
 
         }
-        //[HttpPost, Route("journeys")]
-        //public IActionResult CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, int userId)
-        //{
-        //    //czu car istnieje
+        [HttpPost, Route("journeys")]
+        public IActionResult CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, string userId)
+        {
+            if (!_carService.CarExists(userId,journeyFromBody.CarId))
+            {
+                return BadRequest();
+            }
 
-        //    var routes = Mapper.Map<IEnumerable<PassengerRoute>>(journeyFromBody.Routes);
+            var routes = journeyFromBody.Routes;
 
-        //    if (!_passengerRouteRepository.UsersExistForRoutes(routes))
-        //    {
-        //        return BadRequest();
-        //    }
+            if (!_passengerRouteService.RoutesUsersExist(routes))
+            {
+                return BadRequest();
+            }
 
-        //    if (_passengerRouteService.SameUserForRoutes(routes))
-        //    {
-        //        return BadRequest();
-        //    }
+            if (_passengerRouteService.SameUserForMultipleRoutes(routes))
+            {
+                return BadRequest();
+            }          
+            var journey = _journeyService.AddJourney(userId,journeyFromBody);
 
-        //    _passengerRouteRepository.SetUsersForRoutes(routes);
+            var payments = _paymentService.AddPayments(userId,journey);
 
-        //    var journey = Mapper.Map<Journey>(journeyFromBody);
+            _userService.EditUsersPaymentStatistics(userId,payments);
 
-        //    journey.PassengerRoutes.AddRange(routes);
-
-        //    _journeyService.GiveTotalPrices(journey, (double)journeyFromBody.PriceForLiter, car.FuelConsumption100km);
-
-        //    var payments = _paymentService.GeneratePayments(journey, userId);
-
-        //    _userService.EditUsersPaymentStatistics(payments, userId);
-
-        //    //notification service albo repozytorium wysle notyfikacje
-
-        //    _journeyRepository.AddJourneyForUserAndCar(userId, carId, journey);
-
-        //    _paymentRepository.AddPayments(payments);
-
-        //    if (!_appRepository.Commit())
-        //    {
-        //        return InternalServerError();
-        //    }
-
-        //    var journeyToReturn = Mapper.Map<JourneyDto>(journey);
-
-        //    return CreatedAtRoute("GetJourneyForUserAndCar", new { userId = userId, id = journey.Id, passengerRoutes = true, carId = carId }, journeyToReturn);
-
-        //}
+            return CreatedAtRoute("GetJourney", new { userId = userId, id = journey.Id, carId = journey.CarId  }, journey);
+        }
     }
 
 }

@@ -17,6 +17,6 @@ namespace DriverExpansesTracker.Services.Models.PassengerRoute
         public int Length { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

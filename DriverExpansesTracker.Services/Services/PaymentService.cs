@@ -47,5 +47,25 @@ namespace DriverExpansesTracker.Services.Services
 
             return Mapper.Map<IEnumerable<PaymentDto>>(payments);
         }
+
+        public IEnumerable<Payment> AddPayments(string userId, Journey journey)
+        {
+            var payments = new List<Payment>();
+
+            var routes = journey.PassengerRoutes;
+
+            foreach (var route in routes)
+            {
+                var payment = new Payment
+                {
+                    ReceiverId = journey.UserId,
+                    PayerId = route.UserId,
+                    Journey = journey,
+                    Amount = route.TotalPrice,
+                };
+                payments.Add(payment);
+            }
+            return payments;
+        }
     }
 }

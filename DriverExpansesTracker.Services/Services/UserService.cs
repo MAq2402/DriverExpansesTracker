@@ -44,6 +44,11 @@ namespace DriverExpansesTracker.Services.Services
             _userRepository.Delete(user);
         }
 
+        public void EditUsersPaymentStatistics(string receiverId, IEnumerable<Payment> payments)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public bool UserExists(string id)
         {
