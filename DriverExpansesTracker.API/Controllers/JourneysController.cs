@@ -106,23 +106,31 @@ namespace DriverExpansesTracker.API.Controllers
         [HttpPost, Route("journeys")]
         public IActionResult CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, string userId)
         {
-            if (!_carService.CarExists(userId,journeyFromBody.CarId))
+            var car = _carService.GetCar(userId, journeyFromBody.CarId);
+
+            if (car == null)
             {
-                return BadRequest();
+                ModelState.AddModelError("", "Car with this id does not exist");
+                return BadRequest(ModelState);
             }
 
             var routes = journeyFromBody.Routes;
 
             if (!_passengerRouteService.RoutesUsersExist(routes))
             {
-                return BadRequest();
+                ModelState.AddModelError("", "User from route does not exist");
+                return BadRequest(ModelState);
             }
 
             if (_passengerRouteService.SameUserForMultipleRoutes(routes))
             {
-                return BadRequest();
+                ModelState.AddModelError("", "Multiple users for the same route");
+                return BadRequest(ModelState);
             }          
+
             var journey = _journeyService.AddJourney(userId,journeyFromBody);
+
+            _journeyService.SetTotalPrices(journey, car.FuelConsumption100km, journeyFromBody.PriceForLiter);
 
             var payments = _paymentService.AddPayments(journey);
 

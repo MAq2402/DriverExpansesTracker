@@ -78,7 +78,6 @@ namespace DriverExpansesTracker.API
             });
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository.Repositories.Repository<>));
-            services.AddScoped<IAppService, AppService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<IJourneyService, JourneyService>();

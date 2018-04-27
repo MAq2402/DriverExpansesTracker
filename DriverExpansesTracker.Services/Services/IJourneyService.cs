@@ -15,5 +15,6 @@ namespace DriverExpansesTracker.Services.Services
         bool JourneyExists(string userId, int id);
         Journey AddJourney(string userId, JourneyForCreationDto journey);
         JourneyDto GetJourney(Journey journey);
+        void SetTotalPrices(Journey journey, double fuelConsumption100Km, decimal priceForLiter);
     }
 }

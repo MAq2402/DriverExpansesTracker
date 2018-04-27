@@ -19,14 +19,12 @@ namespace DriverExpansesTracker.API.Controllers
         private UserManager<User> _userManager;
         private SignInManager<User> _signInManager;
         private IUserService _userService;
-        private IAppService _appService;
 
-        public UsersController(UserManager<User> userManager, SignInManager<User> signInManager,IUserService userService,IAppService appService)
+        public UsersController(UserManager<User> userManager, SignInManager<User> signInManager,IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userService = userService;
-            _appService = appService;
         }
         [HttpGet]
         public IActionResult GetUsers()
@@ -48,18 +46,18 @@ namespace DriverExpansesTracker.API.Controllers
             return Ok(user);
         }
 
-        //[HttpGet("{id}", Name = "GetUserById")]
-        //public IActionResult GetUserById(string id)
-        //{
-        //    var user = _userService.GetUserById(id);
+        [HttpGet("{id}", Name = "GetUserById")]
+        public IActionResult GetUserById(string id)
+        {
+            var user = _userService.GetUserById(id);
 
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-        //    return Ok(user);
-        //}
+            return Ok(user);
+        }
 
         [HttpPost()]
         [ValidateModelFilter]
@@ -124,15 +122,7 @@ namespace DriverExpansesTracker.API.Controllers
 
             _userService.RemoveUser(userName);
 
-            if(!_appService.Save())
-            {
-                throw new Exception("Could not save to Db");
-            }
-
             return NoContent();
         }
-        //[HttpPatch("{userName}")]
-
-        //public IActionResult PatchUser()
     }
 }

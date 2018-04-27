@@ -67,8 +67,6 @@ namespace DriverExpansesTracker.Services.Services
 
             journeyToSave.PassengerRoutes.ForEach(pr => pr.DateTime = journeyToSave.DateTime);
 
-            CalculatePrices(journeyToSave,car.FuelConsumption100km,journey.PriceForLiter);
-
             journeyToSave.UserId = userId;
 
             _journeyRepository.Add(journeyToSave);
@@ -81,7 +79,12 @@ namespace DriverExpansesTracker.Services.Services
             return journeyToSave;
         }
 
-        private void CalculatePrices(Journey journey, double fuelConsumption100Km, decimal priceForLiter)
+        public JourneyDto GetJourney(Journey journey)
+        {
+            return Mapper.Map<JourneyDto>(journey);
+        }
+
+        public void SetTotalPrices(Journey journey, double fuelConsumption100Km, decimal priceForLiter)
         {
             journey.TotalPrice = Convert.ToDecimal(fuelConsumption100Km * journey.Length * (double)priceForLiter / 100);
 
@@ -114,11 +117,11 @@ namespace DriverExpansesTracker.Services.Services
 
                 previousLength += currentLength;
             }
-        }
 
-        public JourneyDto GetJourney(Journey journey)
-        {
-            return Mapper.Map<JourneyDto>(journey);
+            if(!_journeyRepository.Save())
+            {
+                throw new Exception("Could not save total prices");
+            }
         }
     }
 }

@@ -42,6 +42,11 @@ namespace DriverExpansesTracker.Services.Services
         {
             var user = _userRepository.FindSingleBy(u => u.UserName == name);
             _userRepository.Delete(user);
+
+            if(!_userRepository.Save())
+            {
+                throw new Exception("Could not remove user");
+            }
         }
 
         public void EditUsersPaymentStatistics(string receiverId, IEnumerable<Payment> payments)
