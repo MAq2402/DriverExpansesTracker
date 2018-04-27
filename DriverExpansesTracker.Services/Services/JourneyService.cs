@@ -65,6 +65,8 @@ namespace DriverExpansesTracker.Services.Services
                 throw new Exception("Car does not exist");
             }
 
+            journeyToSave.PassengerRoutes.ForEach(pr => pr.DateTime = journeyToSave.DateTime);
+
             CalculatePrices(journeyToSave,car.FuelConsumption100km,journey.PriceForLiter);
 
             journeyToSave.UserId = userId;
@@ -112,6 +114,11 @@ namespace DriverExpansesTracker.Services.Services
 
                 previousLength += currentLength;
             }
+        }
+
+        public JourneyDto GetJourney(Journey journey)
+        {
+            return Mapper.Map<JourneyDto>(journey);
         }
     }
 }

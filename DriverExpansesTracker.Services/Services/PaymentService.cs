@@ -48,7 +48,7 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<IEnumerable<PaymentDto>>(payments);
         }
 
-        public IEnumerable<Payment> AddPayments(string userId, Journey journey)
+        public IEnumerable<Payment> AddPayments(Journey journey)
         {
             var payments = new List<Payment>();
 
@@ -60,11 +60,19 @@ namespace DriverExpansesTracker.Services.Services
                 {
                     ReceiverId = journey.UserId,
                     PayerId = route.UserId,
-                    Journey = journey,
+                    JourneyId = journey.Id,
                     Amount = route.TotalPrice,
                 };
                 payments.Add(payment);
             }
+
+            _paymentRepository.AddRange(payments);
+
+            if(!_paymentRepository.Save())
+            {
+                throw new Exception("Could not save payments");
+            }
+
             return payments;
         }
     }

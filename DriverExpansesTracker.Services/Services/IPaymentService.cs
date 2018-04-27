@@ -12,6 +12,6 @@ namespace DriverExpansesTracker.Services.Services
         IEnumerable<PaymentDto> GetPayments(string userId);
         IEnumerable<PaymentDto> GetPayments(string userId, int journeyId);
         PaymentDto GetPayment(string userId, int journeyId, int id);
-        IEnumerable<Payment> AddPayments(string userId, Journey journey);
+        IEnumerable<Payment> AddPayments(Journey journey);
     }
 }

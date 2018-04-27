@@ -124,11 +124,13 @@ namespace DriverExpansesTracker.API.Controllers
             }          
             var journey = _journeyService.AddJourney(userId,journeyFromBody);
 
-            var payments = _paymentService.AddPayments(userId,journey);
+            var payments = _paymentService.AddPayments(journey);
 
             _userService.EditUsersPaymentStatistics(userId,payments);
 
-            return CreatedAtRoute("GetJourney", new { userId = userId, id = journey.Id, carId = journey.CarId  }, journey);
+            var journeyToReturn = _journeyService.GetJourney(journey);
+
+            return CreatedAtRoute("GetJourney", new {  userId=userId, id = journey.Id, carId = journey.CarId  }, journeyToReturn);
         }
     }
 

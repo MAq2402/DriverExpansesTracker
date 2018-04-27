@@ -8,9 +8,6 @@ namespace DriverExpansesTracker.Services.Models.PassengerRoute
     public class PassengerRouteForCreationDto
     {
         [Required, MaxLength(50)]
-        public string Destination { get; set; }
-
-        [Required, MaxLength(50)]
         public string Start { get; set; }
 
         [Required, Range(1, 400000)]

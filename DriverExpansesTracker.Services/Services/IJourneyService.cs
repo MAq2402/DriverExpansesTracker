@@ -13,7 +13,7 @@ namespace DriverExpansesTracker.Services.Services
         JourneyDto GetJourney(string userId, int id);
         JourneyDto GetJourney(string userId, int carId, int id);
         bool JourneyExists(string userId, int id);
-
         Journey AddJourney(string userId, JourneyForCreationDto journey);
+        JourneyDto GetJourney(Journey journey);
     }
 }

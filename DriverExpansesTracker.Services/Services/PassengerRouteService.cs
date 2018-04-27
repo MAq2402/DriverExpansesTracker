@@ -54,7 +54,7 @@ namespace DriverExpansesTracker.Services.Services
 
             foreach (var route in routes)
             {
-                if (users.Any(u=>u.Id==route.UserId))
+                if (!users.Any(u=>u.Id==route.UserId))
                 {
                     return false;
                 }

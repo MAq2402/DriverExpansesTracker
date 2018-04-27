@@ -10,6 +10,10 @@ namespace DriverExpansesTracker.Repository.Entities
 {
     public class PassengerRoute:Entity
     {
+        public PassengerRoute()
+        {
+            DateTime = DateTime.Now;
+        }
         [Required,MaxLength(50)]
         public string Destination { get; set; }
         [Required, MaxLength(50)]

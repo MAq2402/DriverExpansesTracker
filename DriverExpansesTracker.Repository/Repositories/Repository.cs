@@ -21,6 +21,11 @@ namespace DriverExpansesTracker.Repository.Repositories
             _context.Set<T>().Add(entity);
         }
 
+        public void AddRange(IEnumerable<T> entities)
+        {
+            _context.Set<T>().AddRange(entities);
+        }
+
         public virtual void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);

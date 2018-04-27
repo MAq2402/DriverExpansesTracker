@@ -46,7 +46,24 @@ namespace DriverExpansesTracker.Services.Services
 
         public void EditUsersPaymentStatistics(string receiverId, IEnumerable<Payment> payments)
         {
-            throw new NotImplementedException();
+            var receiver = _userRepository.FindSingleBy(u=>u.Id==receiverId);
+
+            if (receiver == null)
+            {
+                throw new ArgumentNullException("Receiver does not exist");
+            }
+
+            receiver.ToReceive = payments.Sum(p => p.Amount);
+
+            foreach (var payment in payments)
+            {
+                var payer = _userRepository.FindSingleBy(u=>u.Id==payment.PayerId);
+                if (payer == null)
+                {
+                    throw new ArgumentNullException("Payer does not exist");
+                }
+                payer.ToPay = payment.Amount;
+            }
         }
 
 
@@ -59,4 +76,5 @@ namespace DriverExpansesTracker.Services.Services
             return false;
         }
     }
-}
+
+    }

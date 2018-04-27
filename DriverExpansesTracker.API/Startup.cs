@@ -107,9 +107,11 @@ namespace DriverExpansesTracker.API
                 cfg.CreateMap<DriverExpansesTracker.Services.Models.Car.CarForCreationDto, DriverExpansesTracker.Repository.Entities.Car>();
 
                 cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Journey, DriverExpansesTracker.Services.Models.Journey.JourneyDto>();
-                cfg.CreateMap<DriverExpansesTracker.Services.Models.Journey.JourneyForCreationDto, DriverExpansesTracker.Repository.Entities.Journey>();
+                cfg.CreateMap<DriverExpansesTracker.Services.Models.Journey.JourneyForCreationDto, DriverExpansesTracker.Repository.Entities.Journey>()
+                   .ForMember(dest=>dest.PassengerRoutes,opt=>opt.MapFrom(src=>src.Routes));
 
                 cfg.CreateMap<DriverExpansesTracker.Repository.Entities.PassengerRoute, DriverExpansesTracker.Services.Models.PassengerRoute.PassengerRouteDto>();
+                cfg.CreateMap<DriverExpansesTracker.Services.Models.PassengerRoute.PassengerRouteForCreationDto, DriverExpansesTracker.Repository.Entities.PassengerRoute>();
 
                 cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Payment, DriverExpansesTracker.Services.Models.Payment.PaymentDto>();
             });
