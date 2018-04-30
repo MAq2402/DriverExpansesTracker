@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DriverExpansesTracker.API\DriverExpansesTracker.API.csproj" />
     <ProjectReference Include="..\DriverExpansesTracker.Services\DriverExpansesTracker.Services.csproj" />
   </ItemGroup>
 
