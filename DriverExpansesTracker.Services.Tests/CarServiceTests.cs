@@ -22,7 +22,7 @@ namespace DriverExpansesTracker.Services.Tests
             mockedCarRepository = new Mock<IRepository<Car>>();
         }
         [Fact]
-        void AddCar_ThrowsException()
+        void AddCar_ShouldThrowException()
         {
             //Arrange          
             mockedCarRepository.Setup(r => r.Save()).Returns(false);
@@ -42,7 +42,7 @@ namespace DriverExpansesTracker.Services.Tests
             Assert.Equal(expectedMessage, exception.Message);
         }
         [Fact]
-        void AddCar_ReturnsGoodCar()
+        void AddCar_ShouldReturnGoodCar()
         {
             //Arrange
             mockedCarRepository.Setup(r => r.Save()).Returns(true);          
@@ -73,6 +73,15 @@ namespace DriverExpansesTracker.Services.Tests
             Assert.Equal(expected.Id, actual.Id);
             Assert.Equal(expected.Name, actual.Name);
             Assert.Equal(expected.UserId, actual.UserId);
+        }
+
+        [Fact]
+        public void CarExists_ShouldReturnTrue()
+        {
+            //Arrange
+            //mockedCarRepository.Se
+            //Act
+            //Assert
         }
     }
 }

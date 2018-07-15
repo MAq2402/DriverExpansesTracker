@@ -86,7 +86,14 @@ namespace DriverExpansesTracker.API
             services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddScoped<ValidateIfUserExists>();
-            
+
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -108,6 +115,8 @@ namespace DriverExpansesTracker.API
             app.UseAuthentication();
 
             app.UseMvc();
+
+            app.UseCors("MyPolicy");
 
         }
     }
