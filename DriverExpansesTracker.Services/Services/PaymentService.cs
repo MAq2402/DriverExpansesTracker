@@ -38,7 +38,7 @@ namespace DriverExpansesTracker.Services.Services
             var payments = _paymentRepository.FindBy(p => p.ReceiverId == userId || p.PayerId == userId)
                                               .OrderByDescending(p => p.DateTime);
 
-            return new PagedList<Payment>(payments, resourceParameters.PageNumber, resourceParameters.PageSize);       
+            return new PagedList<Payment>(payments, resourceParameters.PageNumber, resourceParameters.PageSize);               
         }
 
         public IEnumerable<PaymentDto> GetPayments(string userId, int journeyId)

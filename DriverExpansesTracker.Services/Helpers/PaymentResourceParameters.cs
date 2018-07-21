@@ -6,6 +6,6 @@ namespace DriverExpansesTracker.Services.Helpers
 {
     public class PaymentResourceParameters:ResourceParameters
     {
-        public DateTime? DateTime { get; set; } = null;
+        //public DateTime? DateTime { get; set; } = null;
     }
 }
