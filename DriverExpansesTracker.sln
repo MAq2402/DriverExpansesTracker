@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.API",
 		{611C26F7-D5D0-4E43-913B-F93E765182D9} = {611C26F7-D5D0-4E43-913B-F93E765182D9}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DriverExpansesTracker.FrontEnd", "DriverExpansesTracker.FrontEnd", "{BFC526C6-53FF-41E5-8C55-82043E68ECC7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.Services", "DriverExpansesTracker.Services\DriverExpansesTracker.Services.csproj", "{611C26F7-D5D0-4E43-913B-F93E765182D9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C336A12D-2BB3-491E-9BED-1B7BC01D74DA} = {C336A12D-2BB3-491E-9BED-1B7BC01D74DA}
@@ -18,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.Repository", "DriverExpansesTracker.Repository\DriverExpansesTracker.Repository.csproj", "{C336A12D-2BB3-491E-9BED-1B7BC01D74DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriverExpansesTracker.Services.Tests", "DriverExpansesTracker.Services.Tests\DriverExpansesTracker.Services.Tests.csproj", "{764E6257-CD10-4C2F-B830-06BD96B1C76C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriverExpansesTracker.Services.Tests", "DriverExpansesTracker.Services.Tests\DriverExpansesTracker.Services.Tests.csproj", "{764E6257-CD10-4C2F-B830-06BD96B1C76C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
+using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.Payment;
 using System;
 using System.Collections.Generic;
@@ -32,12 +33,12 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<PaymentDto>(payment);
         }
 
-        public IEnumerable<PaymentDto> GetPayments(string userId)
+        public PagedList<Payment> GetPayments(string userId, PaymentResourceParameters resourceParameters)
         {
             var payments = _paymentRepository.FindBy(p => p.ReceiverId == userId || p.PayerId == userId)
                                               .OrderByDescending(p => p.DateTime);
 
-            return Mapper.Map<IEnumerable<PaymentDto>>(payments);
+            return new PagedList<Payment>(payments, resourceParameters.PageNumber, resourceParameters.PageSize);       
         }
 
         public IEnumerable<PaymentDto> GetPayments(string userId, int journeyId)
@@ -74,6 +75,26 @@ namespace DriverExpansesTracker.Services.Services
             }
 
             return payments;
+        }
+
+        public IEnumerable<PaymentDto> GetPayments(PagedList<Payment> pagedList)
+        {
+            return Mapper.Map<IEnumerable<PaymentDto>>(pagedList.ToList());
+        }
+
+        public string CreateResourceUri(PaymentResourceParameters resourceParameters, ResourceUriType type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PagingHeader<Payment> GetPagingHeader(PagedList<Payment> pagedPayments, PaymentResourceParameters resourceParameters, CreateResourceUriDel del)
+        {
+            var pagingHeader = new PagingHeader<Payment>(pagedPayments, resourceParameters);
+
+            pagingHeader.NextPageLink = pagedPayments.HasNext ? del(resourceParameters, ResourceUriType.NextPage) : null;
+            pagingHeader.PreviousPageLink = pagedPayments.HasPrevious ? del(resourceParameters, ResourceUriType.PreviousPage) : null;
+
+            return pagingHeader;
         }
     }
 }
