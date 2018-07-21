@@ -5,6 +5,7 @@ using System.Text;
 using AutoMapper;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
+using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.Journey;
 
 namespace DriverExpansesTracker.Services.Services
@@ -123,5 +124,15 @@ namespace DriverExpansesTracker.Services.Services
                 throw new Exception("Could not save total prices");
             }
         }
+
+        //public PagedList<Journey> GetPagedJourneys(string userId, JourneyResourceParameters resourceParameters)
+        //{
+        //    return null;
+        //}
+
+        //public IEnumerable<JourneyDto> GetJourneys(PagedList<Journey> pagedList)
+        //{
+        //    return null;
+        //}
     }
 }

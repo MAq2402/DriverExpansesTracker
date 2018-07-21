@@ -4,8 +4,7 @@ using System.Text;
 
 namespace DriverExpansesTracker.Services.Helpers
 {
-    public class PaymentResourceParameters:ResourceParameters
+    public class JourneyResourceParameters:ResourceParameters
     {
-        public DateTime? DateTime { get; set; } = null;
     }
 }

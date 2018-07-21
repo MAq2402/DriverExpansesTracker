@@ -13,27 +13,31 @@ using Microsoft.AspNetCore.Mvc;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}")]
-    public class PaymentsController : Controller
+    public class PaymentsController : BaseController
     {
         private IUserService _userService;
         private IPaymentService _paymentService;
         private IJourneyService _journeyService;
-        private IUrlHelper _urlHelper;
+        private IService<Payment> _service;
 
-        public PaymentsController(IUserService userService, IPaymentService paymentService,IJourneyService journeyService,IUrlHelper urlHelper)
+        public PaymentsController(IUserService userService, 
+                                  IPaymentService paymentService,
+                                  IJourneyService journeyService,
+                                  IService<Payment> service,
+                                  IUrlHelper urlHelper):base(urlHelper)
         {
             _userService = userService;
             _paymentService = paymentService;
             _journeyService = journeyService;
-            _urlHelper = urlHelper;
+            _service = service;
         }
 
-        [HttpGet("payments",Name ="GetPayments")]
-        //[Route("payments")]
-        //[Route("journeys/{journeyId}/payments")]
+        [HttpGet]
+        [Route("payments",Name = "GetPayments")]
+        [Route("journeys/{journeyId}/payments")]
         public IActionResult GetPayments(string userId,int ?journeyId,PaymentResourceParameters resourceParameters)
         {
-            //journeyId can't be null need to fix it
+            //Apply paging too!
             if (journeyId != null)
             {
                 if(!_journeyService.JourneyExists(userId,(int)journeyId))
@@ -50,21 +54,16 @@ namespace DriverExpansesTracker.API.Controllers
                 {
                     return NotFound();
                 }
-                var pagedPayments = _paymentService.GetPayments(userId,resourceParameters);
+                var pagedPayments = _paymentService.GetPagedPayments(userId,resourceParameters);
 
-                var del = new CreateResourceUriDel(CreateResourceUri);
-
-                var pagingHeader = _paymentService.GetPagingHeader(pagedPayments, resourceParameters,del);
+                var pagingHeader = _service.GetPagingHeader("GetPayments",pagedPayments, resourceParameters, new CreateResourceUriDel(CreateResourceUri));
 
                 Response.Headers.Add("X-Pagination", pagingHeader.ToJson());
 
                 var payments = _paymentService.GetPayments(pagedPayments);
 
                 return Ok(payments);
-
             }
-            
-
         }
 
         [HttpGet]
@@ -108,34 +107,7 @@ namespace DriverExpansesTracker.API.Controllers
                 }
 
                 return Ok(payment);
-            }
-            
+            }   
         }
-
-        private string CreateResourceUri(PaymentResourceParameters resourceParameters, ResourceUriType type)
-        {
-            switch (type)
-            {
-                case ResourceUriType.PreviousPage:
-                    return _urlHelper.Link("GetPayments", new
-                    {
-                        pageNumber = resourceParameters.PageNumber - 1,
-                        pageSize = resourceParameters.PageNumber
-                    });
-                case ResourceUriType.NextPage:
-                    return _urlHelper.Link("GetPayments", new
-                    {
-                        pageNumber = resourceParameters.PageNumber + 1,
-                        pageSize = resourceParameters.PageNumber
-                    });
-                default:
-                    return _urlHelper.Link("GetPayments", new
-                    {
-                        pageNumber = resourceParameters.PageNumber,
-                        pageSize = resourceParameters.PageNumber
-                    });
-            }
-        }
-
     }
 }

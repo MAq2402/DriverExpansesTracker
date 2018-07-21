@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DriverExpansesTracker.Repository.Entities;
+using DriverExpansesTracker.Services.Helpers;
+using System.Linq;
 
 namespace DriverExpansesTracker.Services.Services
 {
@@ -16,5 +18,7 @@ namespace DriverExpansesTracker.Services.Services
         Journey AddJourney(string userId, JourneyForCreationDto journey);
         JourneyDto GetJourney(Journey journey);
         void SetTotalPrices(Journey journey, double fuelConsumption100Km, decimal priceForLiter);
+        //PagedList<Journey> GetPagedJourneys(string userId, JourneyResourceParameters resourceParameters);
+        //IEnumerable<JourneyDto> GetJourneys(PagedList<Journey> pagedList);
     }
 }

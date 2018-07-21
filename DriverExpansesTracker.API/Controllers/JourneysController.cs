@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.Journey;
 using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}")]
-    public class JourneysController : Controller
+    public class JourneysController : BaseController
     {
         private IUserService _userService;
         private IJourneyService _journeyService;
@@ -23,7 +24,8 @@ namespace DriverExpansesTracker.API.Controllers
             IJourneyService journeyService,
             ICarService carService,
             IPassengerRouteService passengerRouteService,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            IUrlHelper urlHelper):base(urlHelper)
         {
             _userService = userService;
             _journeyService = journeyService;
@@ -33,10 +35,10 @@ namespace DriverExpansesTracker.API.Controllers
         }
         [HttpGet]
         [Route("cars/{carId}/journeys")]
-        [Route("journeys")]
+        [Route("journeys",Name ="GetJourneys")]
 
 
-        public IActionResult GetJourneys(string userId, int? carId = null)
+        public IActionResult GetJourneys(string userId, JourneyResourceParameters resourceParameters,int? carId = null)
         {
 
             if (carId == null)
@@ -57,6 +59,8 @@ namespace DriverExpansesTracker.API.Controllers
                 {
                     return NotFound();
                 }
+
+                //var pagedJourneys = 
 
                 var journeys = _journeyService.GetJourneys(userId, (int)carId);
 

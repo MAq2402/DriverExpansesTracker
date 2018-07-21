@@ -33,7 +33,7 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<PaymentDto>(payment);
         }
 
-        public PagedList<Payment> GetPayments(string userId, PaymentResourceParameters resourceParameters)
+        public PagedList<Payment> GetPagedPayments(string userId, PaymentResourceParameters resourceParameters)
         {
             var payments = _paymentRepository.FindBy(p => p.ReceiverId == userId || p.PayerId == userId)
                                               .OrderByDescending(p => p.DateTime);
@@ -82,19 +82,5 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<IEnumerable<PaymentDto>>(pagedList.ToList());
         }
 
-        public string CreateResourceUri(PaymentResourceParameters resourceParameters, ResourceUriType type)
-        {
-            throw new NotImplementedException();
-        }
-
-        public PagingHeader<Payment> GetPagingHeader(PagedList<Payment> pagedPayments, PaymentResourceParameters resourceParameters, CreateResourceUriDel del)
-        {
-            var pagingHeader = new PagingHeader<Payment>(pagedPayments, resourceParameters);
-
-            pagingHeader.NextPageLink = pagedPayments.HasNext ? del(resourceParameters, ResourceUriType.NextPage) : null;
-            pagingHeader.PreviousPageLink = pagedPayments.HasPrevious ? del(resourceParameters, ResourceUriType.PreviousPage) : null;
-
-            return pagingHeader;
-        }
     }
 }
