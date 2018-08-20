@@ -28,13 +28,13 @@ namespace DriverExpansesTracker.Services.Helpers
             }
         }
 
-        public PagedList(IQueryable<T> query,int pageNumber,int pageSize )
+        public PagedList(IQueryable<T> source,int pageNumber,int pageSize )
         {
             CurrentPage = pageNumber;
-            TotalCount = query.Count();
+            TotalCount = source.Count();
             TotalPages = (int)Math.Ceiling(TotalCount / (double)pageSize);
             PageSize = pageSize;
-            var items = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize);
             AddRange(items);          
         }
     }

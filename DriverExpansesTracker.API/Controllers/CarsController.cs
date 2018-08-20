@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Services.Models.Car;
 using DriverExpansesTracker.Services.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}/cars")]
+    [Authorize(Policy ="User")]
+    //[Authorize]
     //[ServiceFilter(typeof(ValidateIfUserExists))]
     public class CarsController : Controller
     {

@@ -6,6 +6,7 @@ using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}")]
+    [Authorize(Policy ="User")]
     public class PaymentsController : BaseController
     {
         private IUserService _userService;

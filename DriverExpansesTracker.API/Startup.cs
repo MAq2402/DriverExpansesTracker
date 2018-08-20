@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using DriverExpansesTracker.API.Auth;
 using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.API.Infrastructure;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
 using DriverExpansesTracker.Services.Services;
 using DriveTracker.DbContexts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,14 +21,18 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace DriverExpansesTracker.API
 {
     public class Startup
     {
+        private const string SecretKey = "iNivDmHLpUA223sqsfhqGbMRdRj1PVkH"; // todo: get this from somewhere secure"
+        private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -38,19 +45,66 @@ namespace DriverExpansesTracker.API
         {
             services.AddMvc();
 
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, IdentityRole>(options =>
-             {
-                 options.Password.RequireDigit = false;
-                 options.Password.RequiredLength = 1;
-                 options.Password.RequiredUniqueChars = 0;
-                 options.Password.RequireLowercase = false;
-                 options.Password.RequireNonAlphanumeric = false;
-                 options.Password.RequireUppercase = false;
-             })
-             .AddEntityFrameworkStores<AppDbContext>()
-             .AddDefaultTokenProviders();
+            services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
+
+            var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
+
+            services.Configure<JwtIssuerOptions>(options =>
+            {
+                options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+                options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
+                options.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
+            });
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
+
+                ValidateAudience = true,
+                ValidAudience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)],
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = _signingKey,
+
+                RequireExpirationTime = false,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            services.AddAuthentication(options =>
+           {
+               options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+               options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+           }).AddJwtBearer(configureOptions =>
+           {
+               configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
+               configureOptions.TokenValidationParameters = tokenValidationParameters;
+               configureOptions.SaveToken = true;
+           });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("User", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
+            });
+
+            var builder = services.AddIdentityCore<User>(o =>
+            {
+                // configure identity options
+                o.Password.RequireDigit = false;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 2;
+            });
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder.AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
+
+            
 
             services.ConfigureApplicationCookie(config =>
             {
@@ -81,6 +135,7 @@ namespace DriverExpansesTracker.API
                 });
             });
 
+            services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository.Repositories.Repository<>));
             services.AddScoped(typeof(IService<>), typeof(Service<>));
             services.AddScoped<IUserService, UserService>();
@@ -91,12 +146,12 @@ namespace DriverExpansesTracker.API
 
             services.AddScoped<ValidateIfUserExists>();
 
-            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
-            }));
+            //services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            //{
+            //    builder.AllowAnyOrigin()
+            //           .AllowAnyMethod()
+            //           .AllowAnyHeader();
+            //}));
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IUrlHelper, UrlHelper>(implementationFactory =>
@@ -104,6 +159,8 @@ namespace DriverExpansesTracker.API
                 var actionContext = implementationFactory.GetService<IActionContextAccessor>().ActionContext;
                 return new UrlHelper(actionContext);
             });
+
+            
 
         }
 
@@ -123,11 +180,17 @@ namespace DriverExpansesTracker.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "DriverExpansesTracker");
             });
 
-            app.UseAuthentication();
+            //app.UseJwtBearerAuthentication(new JwtBearerOptions
+            //{
+            //    TokenValidationParameters = tok
+            //});
 
+            app.UseAuthentication();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseMvc();
 
-            app.UseCors("MyPolicy");
+            //app.UseCors("MyPolicy");
 
         }
     }
