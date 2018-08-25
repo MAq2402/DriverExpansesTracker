@@ -9,6 +9,7 @@ using DriverExpansesTracker.API.Helpers;
 using DriverExpansesTracker.API.Infrastructure;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Services.Models.User;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ using Newtonsoft.Json;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/auth")]
+    [EnableCors("MyPolicy")]
     public class AuthController : Controller
     {
         private readonly UserManager<User> _userManager;

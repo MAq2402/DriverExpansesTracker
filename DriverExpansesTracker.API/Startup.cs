@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using DriverExpansesTracker.API.Auth;
@@ -12,6 +13,7 @@ using DriverExpansesTracker.Services.Services;
 using DriveTracker.DbContexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -45,7 +47,7 @@ namespace DriverExpansesTracker.API
         {
             services.AddMvc();
 
-            services.AddDbContext<AppDbContext>(options => 
+            services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
@@ -104,7 +106,7 @@ namespace DriverExpansesTracker.API
             builder.AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
 
-            
+
 
             services.ConfigureApplicationCookie(config =>
             {
@@ -127,7 +129,7 @@ namespace DriverExpansesTracker.API
 
             });
 
-            services.AddSwaggerGen(c => 
+            services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
                 {
@@ -146,12 +148,10 @@ namespace DriverExpansesTracker.API
 
             services.AddScoped<ValidateIfUserExists>();
 
-            //services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
-            //{
-            //    builder.AllowAnyOrigin()
-            //           .AllowAnyMethod()
-            //           .AllowAnyHeader();
-            //}));
+            services.AddCors(o => o.AddPolicy("MyPolicy", b =>
+                b.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod())
+            );
+
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IUrlHelper, UrlHelper>(implementationFactory =>
@@ -160,6 +160,7 @@ namespace DriverExpansesTracker.API
                 return new UrlHelper(actionContext);
             });
 
+            
             
 
         }
@@ -171,6 +172,9 @@ namespace DriverExpansesTracker.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+
+
 
             AutoMapperConfiguration.Configure();
 
@@ -185,12 +189,12 @@ namespace DriverExpansesTracker.API
             //    TokenValidationParameters = tok
             //});
 
-            app.UseAuthentication();
+            app.UseAuthentication(); 
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseMvc();
 
-            //app.UseCors("MyPolicy");
+            app.UseCors("MyPolicy");
 
         }
     }
