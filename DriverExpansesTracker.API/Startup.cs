@@ -50,7 +50,7 @@ namespace DriverExpansesTracker.API
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
+           
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 
@@ -93,19 +93,17 @@ namespace DriverExpansesTracker.API
                 options.AddPolicy("User", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
             });
 
-            var builder = services.AddIdentityCore<User>(o =>
-            {
-                // configure identity options
-                o.Password.RequireDigit = false;
-                o.Password.RequireLowercase = false;
-                o.Password.RequireUppercase = false;
-                o.Password.RequireNonAlphanumeric = false;
-                o.Password.RequiredLength = 2;
-            });
-            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
-            builder.AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
-
-
+           services.AddIdentity<User, IdentityRole>(options =>	           
+             {	
+                 options.Password.RequireDigit = false;	            
+                 options.Password.RequiredLength = 1;	
+                 options.Password.RequiredUniqueChars = 0;	            
+                 options.Password.RequireLowercase = false;	            
+                 options.Password.RequireNonAlphanumeric = false;	               
+                 options.Password.RequireUppercase = false;	                
+             })	                
+             .AddEntityFrameworkStores<AppDbContext>()	          
+             .AddDefaultTokenProviders();
 
 
             services.ConfigureApplicationCookie(config =>
@@ -189,7 +187,7 @@ namespace DriverExpansesTracker.API
             //    TokenValidationParameters = tok
             //});
 
-            app.UseAuthentication(); 
+            app.UseAuthentication();
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseMvc();

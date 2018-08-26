@@ -3,22 +3,28 @@ using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Services.Models.User;
 using DriverExpansesTracker.Services.Services;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users")]
+    [EnableCors("MyPolicy")]
 
     public class UsersController:Controller
     {
         private UserManager<User> _userManager;
         private SignInManager<User> _signInManager;
         private IUserService _userService;
+        private IHttpContextAccessor _httpContextAccessor;
 
         public UsersController(UserManager<User> userManager, SignInManager<User> signInManager,IUserService userService)
         {
@@ -92,23 +98,20 @@ namespace DriverExpansesTracker.API.Controllers
             return NoContent();
 
         }
-        [HttpGet("currentIdentity")]
-        public async Task<IActionResult> GetCurrentIdentity()
+        [HttpPost("currentIdentity")]
+        public  IActionResult GetCurrentIdentity([FromBody] Services.Models.Auth.Token token)
         {
-            if(String.IsNullOrEmpty(User.Identity.Name))
+            var tokenS = new JwtSecurityTokenHandler().ReadToken(token.Value) as JwtSecurityToken;
+            var sub = tokenS?.Claims.First(claim => claim.Type == "sub")?.Value;
+            
+            var user = _userService.GetUserByName(sub);
+
+            if(user==null)
             {
-                return NotFound();
-            }
-            var currentIdentity = await _userManager.FindByNameAsync(User.Identity.Name);
-
-            if(currentIdentity==null)
-            {
-                return NotFound();
+                return NoContent();
             }
 
-            var currentIdentityToReturn = Mapper.Map<UserDto>(currentIdentity);
-
-            return Ok(currentIdentityToReturn);
+            return Ok(user);
         }
         [HttpDelete("{userName}")]
         public IActionResult RemoveUser(string userName)
