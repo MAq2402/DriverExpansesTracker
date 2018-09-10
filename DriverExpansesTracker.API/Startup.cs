@@ -164,11 +164,25 @@ namespace DriverExpansesTracker.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    appBuilder.Run(async context =>
+                    {
+                        var exceptionHandlerFeature =  context.Features.Get<IExceptionHandlerFeature>();
+                        if(exceptionHandlerFeature != null)
+                        {
+                            var logger = loggerFactory.CreateLogger("Global exception logger");
+                            logger.LogError(500, exceptionHandlerFeature.Error, exceptionHandlerFeature.Error.Message);
+                        }
+                        await context.Response.WriteAsync("An unexpected fault happend. Try again later.");
+                    });
+                });
             }
 
 
@@ -182,14 +196,13 @@ namespace DriverExpansesTracker.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "DriverExpansesTracker");
             });
 
-            //app.UseJwtBearerAuthentication(new JwtBearerOptions
-            //{
-            //    TokenValidationParameters = tok
-            //});
 
             app.UseAuthentication();
+
             app.UseDefaultFiles();
+
             app.UseStaticFiles();
+
             app.UseMvc();
 
             app.UseCors("MyPolicy");

@@ -83,21 +83,6 @@ namespace DriverExpansesTracker.API.Controllers
             return CreatedAtRoute("GetUserByName",new { userName = userToReturn.UserName },userToReturn);
         }
 
-        [HttpPost("login")]
-        [ValidateModelFilter]
-        public async Task<IActionResult> LoginUser([FromBody] LoginDto credentials)
-        {
-
-            var result = await _signInManager.PasswordSignInAsync(credentials.UserName, credentials.Password, false, false);
-
-            if(!result.Succeeded)
-            {
-                return BadRequest();
-            }
-
-            return NoContent();
-
-        }
         [HttpPost("currentIdentity")]
         public  IActionResult GetCurrentIdentity([FromBody] Services.Models.Auth.Token token)
         {

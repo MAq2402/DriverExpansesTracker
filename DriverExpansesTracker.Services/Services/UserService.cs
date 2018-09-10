@@ -74,11 +74,7 @@ namespace DriverExpansesTracker.Services.Services
 
         public bool UserExists(string id)
         {
-            if(_userRepository.FindBy(u=>u.Id==id).Any())
-            {
-                return true;
-            }
-            return false;
+            return _userRepository.FindBy(u => u.Id == id).Any();
         }
     }
 
