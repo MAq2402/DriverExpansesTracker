@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DriverExpansesTracker.Services.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}")]
+    [EnableCors("MyPolicy")]
+    [Authorize(Policy = "User")]
     public class PassengerRoutesController : Controller
     {
         private IPassengerRouteService _passengerRouteService;

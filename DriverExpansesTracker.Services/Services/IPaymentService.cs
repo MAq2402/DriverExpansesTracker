@@ -10,7 +10,7 @@ namespace DriverExpansesTracker.Services.Services
     public interface IPaymentService
     {
         PaymentDto GetPayment(string userId, int id);
-        PagedList<Payment> GetPagedPayments(string userId,PaymentResourceParameters resourceParameters);
+        PagedList<Payment> GetPagedPayments(string userId,ResourceParameters resourceParameters);
         IEnumerable<PaymentDto> GetPayments(string userId, int journeyId);
         PaymentDto GetPayment(string userId, int journeyId, int id);
         IEnumerable<Payment> AddPayments(Journey journey);

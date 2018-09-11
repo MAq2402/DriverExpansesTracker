@@ -3,6 +3,7 @@ using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Services.Models.User;
 using DriverExpansesTracker.Services.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,7 @@ namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users")]
     [EnableCors("MyPolicy")]
+    [Authorize(Policy = "User")]
 
     public class UsersController:Controller
     {
@@ -67,6 +69,7 @@ namespace DriverExpansesTracker.API.Controllers
 
         [HttpPost()]
         [ValidateModelFilter]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateUser([FromBody] UserForCreationDto userFromBody)
         {
             var userToSave = Mapper.Map<User>(userFromBody);
@@ -97,20 +100,6 @@ namespace DriverExpansesTracker.API.Controllers
             }
 
             return Ok(user);
-        }
-        [HttpDelete("{userName}")]
-        public IActionResult RemoveUser(string userName)
-        {
-            var user = _userService.GetUserByName(userName);
-
-            if(user==null)
-            {
-                return NotFound();
-            }
-
-            _userService.RemoveUser(userName);
-
-            return NoContent();
         }
     }
 }

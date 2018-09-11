@@ -43,7 +43,6 @@ namespace DriverExpansesTracker.API.Controllers
             {
                 return BadRequest("Wrong credentials");
             }
-            //var x = new Claim()
 
             var jwt =  await Tokens.GenerateJwt(identity, _jwtFactory, credentials.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
             return Ok(jwt);

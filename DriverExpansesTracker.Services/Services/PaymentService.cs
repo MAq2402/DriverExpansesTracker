@@ -33,7 +33,7 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<PaymentDto>(payment);
         }
 
-        public PagedList<Payment> GetPagedPayments(string userId, PaymentResourceParameters resourceParameters)
+        public PagedList<Payment> GetPagedPayments(string userId, ResourceParameters resourceParameters)
         {
             var payments = _paymentRepository.FindBy(p => p.ReceiverId == userId || p.PayerId == userId)
                                               .OrderByDescending(p => p.DateTime);

@@ -7,6 +7,7 @@ using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}")]
+    [EnableCors("MyPolicy")]
     [Authorize(Policy ="User")]
     public class PaymentsController : BaseController
     {
@@ -37,7 +39,7 @@ namespace DriverExpansesTracker.API.Controllers
         [HttpGet]
         [Route("payments",Name = "GetPayments")]
         [Route("journeys/{journeyId}/payments")]
-        public IActionResult GetPayments(string userId,int ?journeyId,PaymentResourceParameters resourceParameters)
+        public IActionResult GetPayments(string userId,int ?journeyId,ResourceParameters resourceParameters)
         {
             //Apply paging too!
             if (journeyId != null)

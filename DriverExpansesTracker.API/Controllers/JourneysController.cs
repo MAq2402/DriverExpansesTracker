@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.Journey;
 using DriverExpansesTracker.Services.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}")]
+    [EnableCors("MyPolicy")]
+    [Authorize(Policy = "User")]
     public class JourneysController : BaseController
     {
         private IUserService _userService;
@@ -38,7 +42,7 @@ namespace DriverExpansesTracker.API.Controllers
         [Route("journeys",Name ="GetJourneys")]
 
 
-        public IActionResult GetJourneys(string userId, JourneyResourceParameters resourceParameters,int? carId = null)
+        public IActionResult GetJourneys(string userId, ResourceParameters resourceParameters,int? carId = null)
         {
 
             if (carId == null)
