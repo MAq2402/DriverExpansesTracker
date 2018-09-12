@@ -11,6 +11,7 @@ namespace DriverExpansesTracker.Services.Models.Car
         public string Name { get; set; }
         public double FuelConsumption100km { get; set; }
         public string FuelType { get; set; }
+        public bool Active { get; set; }
         //public List<Journey> Journeys { get; set; } = new List<Journey>();
     }
 }

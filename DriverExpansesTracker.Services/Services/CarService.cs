@@ -18,6 +18,15 @@ namespace DriverExpansesTracker.Services.Services
             _carRepository = carRepository;
         }
 
+        public bool ActiveCarExists(string userId, int carId)
+        {
+            if (_carRepository.FindBy(c => c.UserId == userId && c.Id == carId&&c.Active).Any())
+            {
+                return true;
+            }
+            return false;
+        }
+
         public CarDto AddCar(CarForCreationDto car, string userId)
         {
             var carToSave = Mapper.Map<Car>(car);
@@ -42,18 +51,52 @@ namespace DriverExpansesTracker.Services.Services
             return false;
         }
 
-        public CarDto GetCar(string userId, int id)
+        public void ChangeToInactive(string userId, int id)
         {
-            var car = _carRepository.FindSingleBy(c => c.Id == id && c.UserId == userId);
+            var car = _carRepository.FindSingleBy(x => x.UserId == userId && x.Id == id && x.Active);
 
-            return Mapper.Map<CarDto>(car);
+            car.Active = false;
+
+            if (!_carRepository.Save())
+            {
+                throw new Exception("Could not disactivate car");
+            }
         }
 
-        public IEnumerable<CarDto> GetCars(string userId)
-        {
-            var cars = _carRepository.FindBy(c=>c.UserId == userId);
 
-            return Mapper.Map<IEnumerable<CarDto>>(cars);
+        public CarDto GetCar(string userId, int id,bool onlyActive)
+        {
+            if (onlyActive)
+            {
+                var car = _carRepository.FindSingleBy(c => c.Id == id && c.UserId == userId&&c.Active);
+                return Mapper.Map<CarDto>(car);
+            }
+            else
+            {
+                var car = _carRepository.FindSingleBy(c => c.Id == id && c.UserId == userId);
+                return Mapper.Map<CarDto>(car);
+            }
+            
+
+            
+        }
+
+        public IEnumerable<CarDto> GetCars(string userId,bool onlyActive)
+        {
+
+            if (onlyActive)
+            {
+                var cars = _carRepository.FindBy(c => c.UserId == userId && c.Active);
+
+                return Mapper.Map<IEnumerable<CarDto>>(cars);
+            }
+            else
+            {
+                var cars = _carRepository.FindBy(c => c.UserId == userId);
+
+                return Mapper.Map<IEnumerable<CarDto>>(cars);
+            }
+            
         }
     }
 }

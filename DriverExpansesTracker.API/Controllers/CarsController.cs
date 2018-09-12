@@ -14,9 +14,8 @@ namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}/cars")]
     [EnableCors("MyPolicy")]
-    [Authorize(Policy ="User")]
-    //[Authorize]
-    //[ServiceFilter(typeof(ValidateIfUserExists))]
+    //[Authorize(Policy ="User")]
+    [Authorize]
     public class CarsController : Controller
     {
         private ICarService _carService;
@@ -29,27 +28,27 @@ namespace DriverExpansesTracker.API.Controllers
         }
 
         [HttpGet()]
-        public IActionResult GetCars(string userId)
+        public IActionResult GetCars(string userId,bool onlyActive = true)
         {
             if (!_userService.UserExists(userId))
             {
                 return NotFound();
             }
 
-            var cars = _carService.GetCars(userId);
+            var cars = _carService.GetCars(userId,onlyActive);
 
             return Ok(cars);
         }
 
         [HttpGet("{id}",Name ="GetCar")]
-        public IActionResult GetCar(string userId, int id)
+        public IActionResult GetCar(string userId, int id, bool onlyActive = true)
         {
             if (!_userService.UserExists(userId))
             {
                 return NotFound();
             }
 
-            var car = _carService.GetCar(userId, id);
+            var car = _carService.GetCar(userId, id,onlyActive);
 
             if(car==null)
             {
@@ -58,6 +57,8 @@ namespace DriverExpansesTracker.API.Controllers
 
             return Ok(car);
         }
+
+
 
         [HttpPost()]
         [ValidateModelFilter]
@@ -71,8 +72,26 @@ namespace DriverExpansesTracker.API.Controllers
             var carToRetrun = _carService.AddCar(carFromBody, userId);
 
             return CreatedAtRoute("GetCar", new { userId = userId, id = carToRetrun.Id }, carToRetrun);
+        }
 
+        [HttpDelete("{id}")]
 
+        public IActionResult ChangeStatusToInactive(string userId,int id)
+        {
+            if (!_userService.UserExists(userId))
+            {
+                return NotFound();
+            }
+           
+
+            if(!_carService.ActiveCarExists(userId,id))
+            {
+                return NotFound();
+            }
+
+            _carService.ChangeToInactive(userId,id);
+
+            return NoContent();
         }
     }
 }

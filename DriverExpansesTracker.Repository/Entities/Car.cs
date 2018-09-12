@@ -28,5 +28,7 @@ namespace DriverExpansesTracker.Repository.Entities
         [Required]
         public FuelType FuelType { get; set; }
 
+        public bool Active { get; set; } = true;
+
     }
 }

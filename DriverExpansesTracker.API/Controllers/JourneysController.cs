@@ -114,7 +114,7 @@ namespace DriverExpansesTracker.API.Controllers
         [HttpPost, Route("journeys")]
         public IActionResult CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, string userId)
         {
-            var car = _carService.GetCar(userId, journeyFromBody.CarId);
+            var car = _carService.GetCar(userId, journeyFromBody.CarId,true);
 
             if (car == null)
             {
