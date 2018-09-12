@@ -93,39 +93,51 @@ namespace DriverExpansesTracker.API
                 options.AddPolicy("User", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
             });
 
-           services.AddIdentity<User, IdentityRole>(options =>	           
-             {	
-                 options.Password.RequireDigit = false;	            
-                 options.Password.RequiredLength = 1;	
-                 options.Password.RequiredUniqueChars = 0;	            
-                 options.Password.RequireLowercase = false;	            
-                 options.Password.RequireNonAlphanumeric = false;	               
-                 options.Password.RequireUppercase = false;	                
-             })	                
-             .AddEntityFrameworkStores<AppDbContext>()	          
-             .AddDefaultTokenProviders();
+            //services.AddIdentity<User, IdentityRole>(options =>
+            //  {
+            //      options.Password.RequireDigit = false;
+            //      options.Password.RequiredLength = 1;
+            //      options.Password.RequiredUniqueChars = 0;
+            //      options.Password.RequireLowercase = false;
+            //      options.Password.RequireNonAlphanumeric = false;
+            //      options.Password.RequireUppercase = false;
+            //  })
+            //  .AddEntityFrameworkStores<AppDbContext>()	          
+            // .AddDefaultTokenProviders();
 
-
-            services.ConfigureApplicationCookie(config =>
+            var builder = services.AddIdentityCore<User>(o =>
             {
-                config.Events.OnRedirectToLogin = context =>
-                {
-                    if (context.Response.StatusCode == StatusCodes.Status200OK)
-                    {
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    }
-                    return Task.CompletedTask;
-                };
-                config.Events.OnRedirectToAccessDenied = context =>
-                {
-                    if (context.Response.StatusCode == StatusCodes.Status200OK)
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    }
-                    return Task.CompletedTask;
-                };
-
+                // configure identity options
+                o.Password.RequireDigit = false;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 6;
             });
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder.AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
+
+            //services.ConfigureApplicationCookie(config =>
+            //{
+            //    config.Events.OnRedirectToLogin = context =>
+            //    {
+            //        if (context.Response.StatusCode == StatusCodes.Status200OK)
+            //        {
+            //            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            //        }
+            //        return Task.CompletedTask;
+            //    };
+            //    config.Events.OnRedirectToAccessDenied = context =>
+            //    {
+            //        if (context.Response.StatusCode == StatusCodes.Status200OK)
+            //        {
+            //            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            //        }
+            //        return Task.CompletedTask;
+            //    };
+
+            //});
 
             services.AddSwaggerGen(c =>
             {

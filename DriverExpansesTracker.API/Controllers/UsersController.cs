@@ -24,14 +24,11 @@ namespace DriverExpansesTracker.API.Controllers
     public class UsersController:Controller
     {
         private UserManager<User> _userManager;
-        private SignInManager<User> _signInManager;
         private IUserService _userService;
-        private IHttpContextAccessor _httpContextAccessor;
 
-        public UsersController(UserManager<User> userManager, SignInManager<User> signInManager,IUserService userService)
+        public UsersController(UserManager<User> userManager,IUserService userService)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _userService = userService;
         }
         [HttpGet]
