@@ -126,6 +126,7 @@ namespace DriverExpansesTracker.API
             services.AddScoped<IJourneyService, JourneyService>();
             services.AddScoped<IPassengerRouteService, PassengerRouteService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddScoped<ValidateIfUserExists>();
 

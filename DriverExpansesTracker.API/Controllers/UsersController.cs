@@ -25,11 +25,13 @@ namespace DriverExpansesTracker.API.Controllers
     {
         private UserManager<User> _userManager;
         private IUserService _userService;
+        private IHttpContextAccessor _httpContextAccessor;
 
-        public UsersController(UserManager<User> userManager,IUserService userService)
+        public UsersController(UserManager<User> userManager,IUserService userService, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _userService = userService;
+            _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
         public IActionResult GetUsers()
@@ -84,14 +86,30 @@ namespace DriverExpansesTracker.API.Controllers
         }
 
         [HttpPost("currentIdentity")]
-        public  IActionResult GetCurrentIdentity([FromBody] Services.Models.Auth.Token token)
+        public IActionResult GetCurrentIdentity([FromBody] Services.Models.Auth.Token token)
         {
             var tokenS = new JwtSecurityTokenHandler().ReadToken(token.Value) as JwtSecurityToken;
             var sub = tokenS?.Claims.First(claim => claim.Type == "sub")?.Value;
-            
+
             var user = _userService.GetUserByName(sub);
 
-            if(user==null)
+            if (user == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(user);
+        }
+
+        [HttpGet("currentIdentity")]
+        public IActionResult GetCurrentIdentity()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            
+
+            var user = string.IsNullOrEmpty(userId) ? null : _userService.GetUserById(userId);
+
+            if (user == null)
             {
                 return NoContent();
             }
