@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -14,6 +15,7 @@ namespace DriverExpansesTracker.API.Controllers
     [Route("api/users/{userId}")]
     [EnableCors("MyPolicy")]
     [Authorize(Policy = "User")]
+    [ValidateAuthorizedUserFilter]
     public class PassengerRoutesController : Controller
     {
         private IPassengerRouteService _passengerRouteService;

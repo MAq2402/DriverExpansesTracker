@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.Journey;
 using DriverExpansesTracker.Services.Services;
@@ -16,6 +17,7 @@ namespace DriverExpansesTracker.API.Controllers
     [Route("api/users/{userId}")]
     [EnableCors("MyPolicy")]
     [Authorize(Policy = "User")]
+    [ValidateAuthorizedUserFilter]
     public class JourneysController : BaseController
     {
         private IUserService _userService;

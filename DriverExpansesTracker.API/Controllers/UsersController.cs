@@ -25,13 +25,11 @@ namespace DriverExpansesTracker.API.Controllers
     {
         private UserManager<User> _userManager;
         private IUserService _userService;
-        private IHttpContextAccessor _httpContextAccessor;
 
-        public UsersController(UserManager<User> userManager,IUserService userService, IHttpContextAccessor httpContextAccessor)
+        public UsersController(UserManager<User> userManager,IUserService userService)
         {
             _userManager = userManager;
             _userService = userService;
-            _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
         public IActionResult GetUsers()

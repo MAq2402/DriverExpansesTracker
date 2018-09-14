@@ -16,6 +16,7 @@ namespace DriverExpansesTracker.API.Controllers
     [EnableCors("MyPolicy")]
     //[Authorize(Policy ="User")]
     [Authorize]
+    [ValidateAuthorizedUserFilter]
     public class CarsController : Controller
     {
         private ICarService _carService;

@@ -17,6 +17,7 @@ namespace DriverExpansesTracker.API.Controllers
     [Route("api/users/{userId}")]
     [EnableCors("MyPolicy")]
     [Authorize(Policy ="User")]
+    [ValidateAuthorizedUserFilter]
     public class PaymentsController : BaseController
     {
         private IUserService _userService;

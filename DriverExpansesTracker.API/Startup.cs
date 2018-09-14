@@ -107,9 +107,6 @@ namespace DriverExpansesTracker.API
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
             builder.AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
-
-            //});
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -126,9 +123,6 @@ namespace DriverExpansesTracker.API
             services.AddScoped<IJourneyService, JourneyService>();
             services.AddScoped<IPassengerRouteService, PassengerRouteService>();
             services.AddScoped<IPaymentService, PaymentService>();
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-
-            services.AddScoped<ValidateIfUserExists>();
 
             services.AddCors(o => o.AddPolicy("MyPolicy", b =>
                 b.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod())
