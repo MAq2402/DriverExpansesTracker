@@ -5,14 +5,14 @@ using System.Text;
 
 namespace DriverExpansesTracker.Services.Helpers
 {
-    public class PagingHeader<T>
+    public class PagingHeader
     {
-        public PagingHeader(PagedList<T> pagedList,ResourceParameters resourceParameters)
+        public PagingHeader(int totalCount, int pageSize, int currentPage, int totalPages)
         {
-            TotalCount = pagedList.TotalCount;
-            PageSize = pagedList.PageSize;
-            CurrentPage = pagedList.CurrentPage;
-            TotalPages = pagedList.TotalPages;
+            TotalCount = totalCount;
+            PageSize = pageSize;
+            CurrentPage = currentPage;
+            TotalPages = totalPages;
         }
         public int TotalCount { get;private set; }
         public int PageSize { get;private set; }

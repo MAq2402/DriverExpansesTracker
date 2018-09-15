@@ -23,18 +23,15 @@ namespace DriverExpansesTracker.API.Controllers
         private IUserService _userService;
         private IPaymentService _paymentService;
         private IJourneyService _journeyService;
-        private IService<Payment> _service;
 
         public PaymentsController(IUserService userService, 
                                   IPaymentService paymentService,
                                   IJourneyService journeyService,
-                                  IService<Payment> service,
                                   IUrlHelper urlHelper):base(urlHelper)
         {
             _userService = userService;
             _paymentService = paymentService;
             _journeyService = journeyService;
-            _service = service;
         }
 
         [HttpGet]
@@ -61,13 +58,12 @@ namespace DriverExpansesTracker.API.Controllers
                 }
                 var pagedPayments = _paymentService.GetPagedPayments(userId,resourceParameters);
 
-                var pagingHeader = _service.GetPagingHeader("GetPayments",pagedPayments, resourceParameters, new CreateResourceUriDel(CreateResourceUri));
+                pagedPayments.Header.PreviousPageLink = CreateResourceUri("GetPayments", resourceParameters, ResourceUriType.PreviousPage);
+                pagedPayments.Header.NextPageLink = CreateResourceUri("GetPayments", resourceParameters, ResourceUriType.NextPage);
 
-                Response.Headers.Add("X-Pagination", pagingHeader.ToJson());
+                Response.Headers.Add("X-Pagination", pagedPayments.Header.ToJson());
 
-                var payments = _paymentService.GetPayments(pagedPayments);
-
-                return Ok(payments);
+                return Ok(pagedPayments.ToList());
             }
         }
 

@@ -117,7 +117,6 @@ namespace DriverExpansesTracker.API
 
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository.Repositories.Repository<>));
-            services.AddScoped(typeof(IService<>), typeof(Service<>));
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICarService, CarService>();
             services.AddScoped<IJourneyService, JourneyService>();

@@ -11,7 +11,7 @@ namespace DriverExpansesTracker.Services.Helpers
         public int CurrentPage { get;private set; }
         public int TotalPages { get; private set; }
         public int PageSize { get; private set; }
-        public int TotalCount { get; private set; }
+        public PagingHeader Header { get;private set; }
 
         public bool HasPrevious
         {
@@ -31,11 +31,18 @@ namespace DriverExpansesTracker.Services.Helpers
         public PagedList(IQueryable<T> source,int pageNumber,int pageSize )
         {
             CurrentPage = pageNumber;
-            TotalCount = source.Count();
-            TotalPages = (int)Math.Ceiling(TotalCount / (double)pageSize);
+
+            var totalCount = source.Count();
+
+            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
             PageSize = pageSize;
+
             var items = source.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-            AddRange(items);          
+
+            AddRange(items);
+
+            Header = new PagingHeader(totalCount, PageSize, CurrentPage, TotalPages);
         }
     }
 }
