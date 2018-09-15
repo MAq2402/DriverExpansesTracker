@@ -21,12 +21,12 @@ namespace DriverExpansesTracker.API.Controllers
     [EnableCors("MyPolicy")]
     [Authorize(Policy = "User")]
 
-    public class UsersController:Controller
+    public class UsersController:BaseController
     {
         private UserManager<User> _userManager;
         private IUserService _userService;
 
-        public UsersController(UserManager<User> userManager,IUserService userService)
+        public UsersController(UserManager<User> userManager, IUserService userService, IUrlHelper urlHelper) : base(urlHelper)
         {
             _userManager = userManager;
             _userService = userService;
@@ -38,7 +38,7 @@ namespace DriverExpansesTracker.API.Controllers
         
             return Ok(users);
         }
-        [HttpGet("{userName}",Name ="GetUserByName")]
+        [HttpGet("byName/{userName}",Name ="GetUserByName")]
         public IActionResult GetUserByName(string userName)
         {
             var user = _userService.GetUserByName(userName);
@@ -69,7 +69,7 @@ namespace DriverExpansesTracker.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> CreateUser([FromBody] UserForCreationDto userFromBody)
         {
-            var userToSave = Mapper.Map<User>(userFromBody);
+            var userToSave = _userService.GetUserEntity(userFromBody);
 
             var result = await _userManager.CreateAsync(userToSave, userFromBody.Password);
 
@@ -78,7 +78,7 @@ namespace DriverExpansesTracker.API.Controllers
                 return BadRequest();
             }
 
-            var userToReturn = Mapper.Map<UserDto>(userToSave);
+            var userToReturn = _userService.GetUser(userToSave);
 
             return CreatedAtRoute("GetUserByName",new { userName = userToReturn.UserName },userToReturn);
         }

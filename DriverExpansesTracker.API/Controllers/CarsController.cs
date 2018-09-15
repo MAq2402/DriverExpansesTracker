@@ -14,34 +14,33 @@ namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}/cars")]
     [EnableCors("MyPolicy")]
-    //[Authorize(Policy ="User")]
-    [Authorize]
+    [Authorize(Policy ="User")]
     [ValidateAuthorizedUserFilter]
-    public class CarsController : Controller
+    public class CarsController : BaseController
     {
         private ICarService _carService;
         private IUserService _userService;
 
-        public CarsController(ICarService carService,IUserService userService)
+        public CarsController(ICarService carService, IUserService userService, IUrlHelper urlHelper):base(urlHelper)
         {
             _carService = carService;
             _userService = userService;
         }
 
         [HttpGet()]
-        public IActionResult GetCars(string userId,bool onlyActive = true)
+        public IActionResult GetCars(string userId, bool onlyActive = true)
         {
             if (!_userService.UserExists(userId))
             {
                 return NotFound();
             }
 
-            var cars = _carService.GetCars(userId,onlyActive);
+            var cars = _carService.GetCars(userId, onlyActive);
 
             return Ok(cars);
         }
 
-        [HttpGet("{id}",Name ="GetCar")]
+        [HttpGet("{id}", Name = "GetCar")]
         public IActionResult GetCar(string userId, int id, bool onlyActive = true)
         {
             if (!_userService.UserExists(userId))
@@ -49,9 +48,9 @@ namespace DriverExpansesTracker.API.Controllers
                 return NotFound();
             }
 
-            var car = _carService.GetCar(userId, id,onlyActive);
+            var car = _carService.GetCar(userId, id, onlyActive);
 
-            if(car==null)
+            if (car == null)
             {
                 return NotFound();
             }
@@ -63,9 +62,9 @@ namespace DriverExpansesTracker.API.Controllers
 
         [HttpPost()]
         [ValidateModelFilter]
-        public IActionResult CreateCar([FromBody] CarForCreationDto carFromBody,string userId)
+        public IActionResult CreateCar([FromBody] CarForCreationDto carFromBody, string userId)
         {
-            if(!_userService.UserExists(userId))
+            if (!_userService.UserExists(userId))
             {
                 return NotFound();
             }
@@ -77,22 +76,30 @@ namespace DriverExpansesTracker.API.Controllers
 
         [HttpDelete("{id}")]
 
-        public IActionResult ChangeStatusToInactive(string userId,int id)
+        public IActionResult ChangeStatusToInactive(string userId, int id)
         {
             if (!_userService.UserExists(userId))
             {
                 return NotFound();
             }
-           
 
-            if(!_carService.ActiveCarExists(userId,id))
+
+            if (!_carService.ActiveCarExists(userId, id))
             {
                 return NotFound();
             }
 
-            _carService.ChangeToInactive(userId,id);
+            _carService.ChangeToInactive(userId, id);
 
             return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+
+        public IActionResult PatchCar(string userId, int id)
+        {
+            
+            return Ok();
         }
     }
 }

@@ -16,13 +16,13 @@ namespace DriverExpansesTracker.API.Controllers
     [EnableCors("MyPolicy")]
     [Authorize(Policy = "User")]
     [ValidateAuthorizedUserFilter]
-    public class PassengerRoutesController : Controller
+    public class PassengerRoutesController : BaseController
     {
         private IPassengerRouteService _passengerRouteService;
         private IUserService _userService;
         private IJourneyService _journeyService;
 
-        public PassengerRoutesController(IPassengerRouteService passengerRouteService, IUserService userService,IJourneyService journeyService)
+        public PassengerRoutesController(IPassengerRouteService passengerRouteService, IUserService userService,IJourneyService journeyService, IUrlHelper urlHelper):base(urlHelper)
         {
             _passengerRouteService = passengerRouteService;
             _userService = userService;

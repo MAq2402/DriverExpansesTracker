@@ -38,16 +38,6 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<IEnumerable<UserDto>>(users);
         }
 
-        public void RemoveUser(string name)
-        {
-            var user = _userRepository.FindSingleBy(u => u.UserName == name);
-            _userRepository.Delete(user);
-
-            if(!_userRepository.Save())
-            {
-                throw new Exception("Could not remove user");
-            }
-        }
 
         public void EditUsersPaymentStatistics(string receiverId, IEnumerable<Payment> payments)
         {
@@ -75,6 +65,16 @@ namespace DriverExpansesTracker.Services.Services
         public bool UserExists(string id)
         {
             return _userRepository.FindBy(u => u.Id == id).Any();
+        }
+
+        public User GetUserEntity(UserForCreationDto user)
+        {
+            return Mapper.Map<User>(user);
+        }
+
+        public UserDto GetUser(User user)
+        {
+            return Mapper.Map<UserDto>(user);
         }
     }
 
