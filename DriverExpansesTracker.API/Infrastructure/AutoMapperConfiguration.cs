@@ -17,6 +17,8 @@ namespace DriverExpansesTracker.API.Infrastructure
 
                 cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Car, DriverExpansesTracker.Services.Models.Car.CarDto>();
                 cfg.CreateMap<DriverExpansesTracker.Services.Models.Car.CarForCreationDto, DriverExpansesTracker.Repository.Entities.Car>();
+                cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Car, DriverExpansesTracker.Services.Models.Car.CarForUpdateDto>();
+                cfg.CreateMap<DriverExpansesTracker.Services.Models.Car.CarForUpdateDto, DriverExpansesTracker.Repository.Entities.Car>();
 
                 cfg.CreateMap<DriverExpansesTracker.Repository.Entities.Journey, DriverExpansesTracker.Services.Models.Journey.JourneyDto>();
                 cfg.CreateMap<DriverExpansesTracker.Services.Models.Journey.JourneyForCreationDto, DriverExpansesTracker.Repository.Entities.Journey>()

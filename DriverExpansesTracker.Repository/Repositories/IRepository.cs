@@ -14,7 +14,6 @@ namespace DriverExpansesTracker.Repository.Repositories
         T FindSingleBy(Expression<Func<T, bool>> predicate);
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);
-        void Update(T entity);
         void Delete(T entity);
         bool Save();
 

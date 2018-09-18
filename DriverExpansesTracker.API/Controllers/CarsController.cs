@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DriverExpansesTracker.API.Filters;
+using DriverExpansesTracker.API.Helpers;
 using DriverExpansesTracker.Services.Models.Car;
 using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -43,11 +45,6 @@ namespace DriverExpansesTracker.API.Controllers
         [HttpGet("{id}", Name = "GetCar")]
         public IActionResult GetCar(string userId, int id, bool onlyActive = true)
         {
-            if (!_userService.UserExists(userId))
-            {
-                return NotFound();
-            }
-
             var car = _carService.GetCar(userId, id, onlyActive);
 
             if (car == null)
@@ -78,13 +75,8 @@ namespace DriverExpansesTracker.API.Controllers
 
         public IActionResult ChangeStatusToInactive(string userId, int id)
         {
-            if (!_userService.UserExists(userId))
-            {
-                return NotFound();
-            }
 
-
-            if (!_carService.ActiveCarExists(userId, id))
+            if (!_carService.CarExists(userId, id,true))
             {
                 return NotFound();
             }
@@ -96,10 +88,34 @@ namespace DriverExpansesTracker.API.Controllers
 
         [HttpPatch("{id}")]
 
-        public IActionResult PatchCar(string userId, int id)
+        public IActionResult PartiallyUpdateCar(string userId, int id,[FromBody] JsonPatchDocument<CarForUpdateDto> patchDoc)
         {
+            if (patchDoc == null)
+            {
+                return BadRequest();
+            }
+
+            var carFromRepo = _carService.GetCarEntity(userId, id);
+
+            if (carFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            var carForUpdate = _carService.GetCarForUpdate(carFromRepo);
+
+            patchDoc.ApplyTo(carForUpdate,ModelState);
+
+            TryValidateModel(carForUpdate);
+
+            if (!ModelState.IsValid)
+            {
+                return new UnprocessableEntityActionResult(ModelState);
+            }
+
+            _carService.UpdateCar(carFromRepo,carForUpdate);
             
-            return Ok();
+            return NoContent();
         }
     }
 }

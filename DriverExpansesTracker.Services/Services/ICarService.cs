@@ -12,10 +12,11 @@ namespace DriverExpansesTracker.Services.Services
         IEnumerable<CarDto> GetCars(string userId, bool onlyActive);
 
         CarDto AddCar(CarForCreationDto car, string userId);
-        bool CarExists(string userId, int carId);
-
-        bool ActiveCarExists(string userId, int carId);
+        bool CarExists(string userId, int carId,bool onlyActive);
 
         void ChangeToInactive(string userId, int id);
+        CarForUpdateDto GetCarForUpdate(Car car);
+        Car GetCarEntity(string userId, int id);
+        void UpdateCar(Car carFromRepo, CarForUpdateDto carForUpdate);
     }
 }

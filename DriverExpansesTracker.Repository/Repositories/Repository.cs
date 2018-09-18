@@ -55,10 +55,5 @@ namespace DriverExpansesTracker.Repository.Repositories
             }
             return false;
         }
-
-        public virtual void Update(T entity)
-        {
-           
-        }
     }
 }

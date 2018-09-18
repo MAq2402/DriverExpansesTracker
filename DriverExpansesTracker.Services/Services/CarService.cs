@@ -18,15 +18,6 @@ namespace DriverExpansesTracker.Services.Services
             _carRepository = carRepository;
         }
 
-        public bool ActiveCarExists(string userId, int carId)
-        {
-            if (_carRepository.FindBy(c => c.UserId == userId && c.Id == carId&&c.Active).Any())
-            {
-                return true;
-            }
-            return false;
-        }
-
         public CarDto AddCar(CarForCreationDto car, string userId)
         {
             var carToSave = Mapper.Map<Car>(car);
@@ -42,16 +33,21 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<CarDto>(carToSave);
         }
 
-        public bool CarExists(string userId, int carId)
+        public bool CarExists(string userId, int carId,bool onlyActive)//Need test
         {
-            if(_carRepository.FindBy(c=>c.UserId==userId&&c.Id==carId).Any())
+            if (onlyActive)
             {
-                return true;
+                return _carRepository.FindBy(c => c.UserId == userId && c.Id == carId && c.Active).Any();
             }
-            return false;
+            else
+            {
+                return _carRepository.FindBy(c => c.UserId == userId && c.Id == carId).Any();
+            }
+           
+    
         }
 
-        public void ChangeToInactive(string userId, int id)
+        public void ChangeToInactive(string userId, int id) // Need test
         {
             var car = _carRepository.FindSingleBy(x => x.UserId == userId && x.Id == id && x.Active);
 
@@ -75,11 +71,19 @@ namespace DriverExpansesTracker.Services.Services
             {
                 var car = _carRepository.FindSingleBy(c => c.Id == id && c.UserId == userId);
                 return Mapper.Map<CarDto>(car);
-            }
-            
-
-            
+            }        
         }
+
+        public Car GetCarEntity(string userId, int id)
+        {
+            return  _carRepository.FindSingleBy(c => c.Id == id && c.UserId == userId && c.Active);
+        }
+
+        public CarForUpdateDto GetCarForUpdate(Car car)
+        {
+            return Mapper.Map<CarForUpdateDto>(car);
+        }
+
 
         public IEnumerable<CarDto> GetCars(string userId,bool onlyActive)
         {
@@ -97,6 +101,16 @@ namespace DriverExpansesTracker.Services.Services
                 return Mapper.Map<IEnumerable<CarDto>>(cars);
             }
             
+        }
+
+        public void UpdateCar(Car carFromRepo, CarForUpdateDto carForUpdate)
+        {
+            Mapper.Map(carForUpdate, carFromRepo);
+
+            if (!_carRepository.Save())
+            {
+                throw new Exception("Could not update car");
+            }
         }
     }
 }

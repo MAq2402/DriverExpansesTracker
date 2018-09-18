@@ -61,7 +61,7 @@ namespace DriverExpansesTracker.API.Controllers
             }
             else
             {
-                if (!_carService.CarExists(userId, (int)carId))
+                if (!_carService.CarExists(userId, (int)carId,true))
                 {
                     return NotFound();
                 }
@@ -96,7 +96,7 @@ namespace DriverExpansesTracker.API.Controllers
             }
             else
             {
-                if (!_carService.CarExists(userId, (int)carId))
+                if (!_carService.CarExists(userId, (int)carId,true))
                 {
                     return NotFound();
                 }
