@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.Repository.Entities;
+using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.User;
 using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -31,12 +32,17 @@ namespace DriverExpansesTracker.API.Controllers
             _userManager = userManager;
             _userService = userService;
         }
-        [HttpGet]
-        public IActionResult GetUsers()
+        [HttpGet(Name = nameof(GetUsers))]
+        public IActionResult GetUsers(ResourceParameters resourceParameters)
         {
-            var users = _userService.GetUsers();
-        
-            return Ok(users);
+            var pagedUsers = _userService.GetPagedUsers(resourceParameters);
+
+            pagedUsers.Header.PreviousPageLink = pagedUsers.HasPrevious ? CreateResourceUri(nameof(GetUsers), resourceParameters, ResourceUriType.PreviousPage) : null;
+            pagedUsers.Header.NextPageLink = pagedUsers.HasNext ? CreateResourceUri(nameof(GetUsers), resourceParameters, ResourceUriType.NextPage) : null;
+
+            Response.Headers.Add("X-Pagination", pagedUsers.Header.ToJson());
+
+            return Ok(pagedUsers);
         }
         [HttpGet("byName/{userName}",Name ="GetUserByName")]
         public IActionResult GetUserByName(string userName)

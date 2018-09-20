@@ -1,4 +1,5 @@
 ﻿using DriverExpansesTracker.Repository.Entities;
+using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.User;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace DriverExpansesTracker.Services.Services
 {
     public interface IUserService
     {
-        IEnumerable<UserDto> GetUsers();
+        PagedList<UserDto> GetPagedUsers(ResourceParameters resourceParameters);
         UserDto GetUserByName(string name);
         UserDto GetUserById(string id);
         bool UserExists(string id);

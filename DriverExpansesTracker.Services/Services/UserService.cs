@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
+using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.User;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -32,11 +33,6 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<UserDto>(user);
         }
 
-        public IEnumerable<UserDto> GetUsers()
-        {
-            var users = _userRepository.GetAll();
-            return Mapper.Map<IEnumerable<UserDto>>(users);
-        }
 
 
         public void EditUsersPaymentStatistics(string receiverId, IEnumerable<Payment> payments)
@@ -75,6 +71,15 @@ namespace DriverExpansesTracker.Services.Services
         public UserDto GetUser(User user)
         {
             return Mapper.Map<UserDto>(user);
+        }
+
+        public PagedList<UserDto> GetPagedUsers(ResourceParameters resourceParameters)
+        {
+            var usersFromRepo = _userRepository.GetAll();
+
+            var users = Mapper.Map<IEnumerable<UserDto>>(usersFromRepo);
+
+            return new PagedList<UserDto>(users.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);
         }
     }
 

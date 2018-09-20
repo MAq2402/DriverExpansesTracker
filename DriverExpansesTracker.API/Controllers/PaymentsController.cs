@@ -58,8 +58,8 @@ namespace DriverExpansesTracker.API.Controllers
                 }
                 var pagedPayments = _paymentService.GetPagedPayments(userId,resourceParameters);
 
-                pagedPayments.Header.PreviousPageLink = CreateResourceUri("GetPayments", resourceParameters, ResourceUriType.PreviousPage);
-                pagedPayments.Header.NextPageLink = CreateResourceUri("GetPayments", resourceParameters, ResourceUriType.NextPage);
+                pagedPayments.Header.PreviousPageLink = pagedPayments.HasPrevious ? CreateResourceUri("GetPayments", resourceParameters, ResourceUriType.PreviousPage) : null;
+                pagedPayments.Header.NextPageLink = pagedPayments.HasNext ? CreateResourceUri("GetPayments", resourceParameters, ResourceUriType.NextPage) : null;
 
                 Response.Headers.Add("X-Pagination", pagedPayments.Header.ToJson());
 
