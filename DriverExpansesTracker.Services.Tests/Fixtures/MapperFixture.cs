@@ -9,7 +9,15 @@ namespace DriverExpansesTracker.Services.Tests.Fixtures
     {
         public MapperFixture()
         {
-            AutoMapperConfiguration.Configure();
+            try
+            {
+                AutoMapperConfiguration.Configure();
+            }
+            catch(Exception)
+            {
+
+            }
+            
         }
         public void Dispose()
         {

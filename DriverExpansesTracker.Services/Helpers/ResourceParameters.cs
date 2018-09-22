@@ -21,5 +21,7 @@ namespace DriverExpansesTracker.Services.Helpers
                 pageSize = value > maxPageSize ? maxPageSize : value;
             }
         }
+
+        public string Search { get; set; }
     }
 }

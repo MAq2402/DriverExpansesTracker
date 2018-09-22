@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -75,7 +76,20 @@ namespace DriverExpansesTracker.Services.Services
 
         public PagedList<UserDto> GetPagedUsers(ResourceParameters resourceParameters)
         {
-            var usersFromRepo = _userRepository.GetAll();
+            var search = resourceParameters.Search;
+
+            IQueryable<User> usersFromRepo;
+
+            if (string.IsNullOrEmpty(search))
+            {
+                usersFromRepo = _userRepository.GetAll();
+            }
+            else
+            {
+                usersFromRepo = _userRepository.GetAll().Where(u => u.UserName.ToLowerInvariant().Contains(search.ToLowerInvariant()) ||
+                                                       u.FirstName.ToLowerInvariant().Contains(search.ToLowerInvariant()) ||
+                                                       u.LastName.ToLowerInvariant().Contains(search.ToLowerInvariant()));
+            }
 
             var users = Mapper.Map<IEnumerable<UserDto>>(usersFromRepo);
 
