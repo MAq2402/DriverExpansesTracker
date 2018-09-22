@@ -8,7 +8,7 @@ namespace DriverExpansesTracker.Services.Helpers
     {
         protected const int maxPageSize = 10;
 
-        protected int pageSize = 5;
+        protected int pageSize = 10;
         public int PageNumber { get; set; } = 1;
         public int PageSize
         {

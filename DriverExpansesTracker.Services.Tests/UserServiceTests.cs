@@ -15,13 +15,12 @@ namespace DriverExpansesTracker.Services.Tests
 {
     public class UserServiceTests:MapperFixture
     {
-        [Fact]
-        public void GetPagedUsersTest()
-        {
-            //Arrange
-            var mockedUserRepository = new Mock<IRepository<User>>();
+        private List<User> collection;
+        private Mock<IRepository<User>> mockedUserRepository;
 
-            var collection = new List<User>()
+        public UserServiceTests()
+        {
+            collection = new List<User>()
             {
                 new User
                 {
@@ -60,8 +59,60 @@ namespace DriverExpansesTracker.Services.Tests
                 }
             };
 
-            mockedUserRepository.Setup(r => r.GetAll()).Returns(collection.AsQueryable());
+            mockedUserRepository = new Mock<IRepository<User>>();
 
+            mockedUserRepository.Setup(r => r.GetAll()).Returns(collection.AsQueryable());
+        }
+        [Fact]
+        public void GetPagedUsersTest_1()
+        {
+            //Arrange
+
+            var userService = new UserService(mockedUserRepository.Object);
+
+            var resourceParams = new ResourceParameters()
+            {
+                Search = "a"
+            };
+
+
+            //Act
+            var actual = userService.GetPagedUsers(resourceParams);
+
+            //Assert
+            Assert.Collection(actual, user => Assert.Contains("Miciak", user.LastName),
+                                      user => Assert.Contains("Kowalski", user.LastName),
+                                      user => Assert.Contains("Nowak", user.LastName),
+                                      user => Assert.Contains("Zembiński", user.LastName),
+                                      user => Assert.Contains("Michalski", user.LastName),
+                                      user => Assert.Contains("Wojtkowska", user.LastName));
+
+        }
+
+        [Fact]
+        public void GetPagedUsersTest_2()
+        {
+            //Arrange
+            var userService = new UserService(mockedUserRepository.Object);
+
+            var resourceParams = new ResourceParameters()
+            {
+                Search = "qq"
+            };
+
+
+            //Act
+            var actual = userService.GetPagedUsers(resourceParams);
+
+            //Assert
+            Assert.Empty(actual);
+
+        }
+
+        [Fact]
+        public void GetPagedUsersTest_3()
+        {
+            //Arrange
             var userService = new UserService(mockedUserRepository.Object);
 
             var resourceParams = new ResourceParameters()
@@ -79,6 +130,6 @@ namespace DriverExpansesTracker.Services.Tests
                                       user3 => Assert.Contains("Michalski", user3.LastName),
                                       user4 => Assert.Contains("Wojtkowska", user4.LastName));
 
-        }//todo Add more tests
+        }
     }
 }
