@@ -10,12 +10,10 @@ using System.Web;
 
 namespace DriverExpansesTracker.Repository.Entities
 {
-    public class User:IdentityUser
+    public class User : IdentityUser
     {
-        [Required]
         public string FirstName { get; set; }
 
-        [Required]
         public string LastName { get; set; }
 
         [InverseProperty("Receiver")]

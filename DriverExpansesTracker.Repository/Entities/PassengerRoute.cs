@@ -14,16 +14,12 @@ namespace DriverExpansesTracker.Repository.Entities
         {
             DateTime = DateTime.Now;
         }
-        [Required,MaxLength(50)]
         public string Destination { get; set; }
-        [Required, MaxLength(50)]
 
         public string Start { get; set; }
 
-        [Required,Range(0,40000)]
         public int Length { get; set; }
 
-        [Required, ForeignKey("User")]
         public string UserId { get; set; }
 
         [Required]

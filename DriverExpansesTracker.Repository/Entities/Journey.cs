@@ -23,13 +23,15 @@ namespace DriverExpansesTracker.Repository.Entities
 
         [ForeignKey("Car")]
         public int CarId { get; set; }
+
+        [Required]
         public Car Car { get; set; }
         public List<PassengerRoute> PassengerRoutes { get; set; } = new List<PassengerRoute>();
 
         [ForeignKey("User")]
         public string UserId { get; set; }
 
- 
+        [Required]
         public User User { get; set; }
 
         public DateTime DateTime { get; set; }
