@@ -17,9 +17,6 @@ namespace DriverExpansesTracker.Services.Models.Journey
         [Required, Range(1, 400000)]
         public int Length { get; set; }
 
-        [Required]
-        public int CarId { get; set; }
-
         [Required, Range(0, 200)]
         public decimal PriceForLiter { get; set; }
         public ICollection<PassengerRouteForCreationDto> Routes { get; set; } = new List<PassengerRouteForCreationDto>();

@@ -44,7 +44,7 @@ namespace DriverExpansesTracker.API.Controllers
 
             return Ok(pagedUsers);
         }
-        [HttpGet("byName/{userName}",Name ="GetUserByName")]
+        [HttpGet("byName/{userName}",Name = Constants.RouteNames.GetUserByName)]
         public IActionResult GetUserByName(string userName)
         {
             var user = _userService.GetUserByName(userName);
@@ -57,7 +57,7 @@ namespace DriverExpansesTracker.API.Controllers
             return Ok(user);
         }
 
-        [HttpGet("{id}", Name = "GetUserById")]
+        [HttpGet("{id}", Name = Constants.RouteNames.GetUserById)]
         public IActionResult GetUserById(string id)
         {
             var user = _userService.GetUserById(id);
@@ -86,7 +86,7 @@ namespace DriverExpansesTracker.API.Controllers
 
             var userToReturn = _userService.GetUser(userToSave);
 
-            return CreatedAtRoute("GetUserByName",new { userName = userToReturn.UserName },userToReturn);
+            return CreatedAtRoute(Constants.RouteNames.GetUserByName,new { userName = userToReturn.UserName },userToReturn);
         }
 
         [HttpPost("currentIdentity")]

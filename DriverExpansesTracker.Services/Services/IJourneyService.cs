@@ -5,6 +5,7 @@ using System.Text;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Services.Helpers;
 using System.Linq;
+using DriverExpansesTracker.Services.Models.Car;
 
 namespace DriverExpansesTracker.Services.Services
 {
@@ -15,10 +16,10 @@ namespace DriverExpansesTracker.Services.Services
         JourneyDto GetJourney(string userId, int id);
         JourneyDto GetJourney(string userId, int carId, int id);
         bool JourneyExists(string userId, int id);
-        Journey AddJourney(string userId, JourneyForCreationDto journey);
+        Journey AddJourney(string userId, JourneyForCreationDto journey,CarDto car);
         JourneyDto GetJourney(Journey journey);
         void SetTotalPrices(Journey journey, double fuelConsumption100Km, decimal priceForLiter);
-        //PagedList<Journey> GetPagedJourneys(string userId, JourneyResourceParameters resourceParameters);
-        //IEnumerable<JourneyDto> GetJourneys(PagedList<Journey> pagedList);
+        PagedList<JourneyDto> GetPagedJourneys(string userId, ResourceParameters resourceParameters, int carId);
+        PagedList<JourneyDto> GetPagedJourneys(string userId, ResourceParameters resourceParameters);
     }
 }

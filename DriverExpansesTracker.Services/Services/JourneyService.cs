@@ -6,6 +6,7 @@ using AutoMapper;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
 using DriverExpansesTracker.Services.Helpers;
+using DriverExpansesTracker.Services.Models.Car;
 using DriverExpansesTracker.Services.Models.Journey;
 
 namespace DriverExpansesTracker.Services.Services
@@ -55,11 +56,9 @@ namespace DriverExpansesTracker.Services.Services
             return false;
         }
 
-        public Journey AddJourney(string userId, JourneyForCreationDto journey)
+        public Journey AddJourney(string userId, JourneyForCreationDto journey,CarDto car)
         {
             var journeyToSave = Mapper.Map<Journey>(journey);
-
-            var car = _carRepository.FindSingleBy(c => c.Id == journey.CarId);
 
             if (car == null)
             {
@@ -68,7 +67,11 @@ namespace DriverExpansesTracker.Services.Services
 
             journeyToSave.PassengerRoutes.ForEach(pr => pr.DateTime = journeyToSave.DateTime);
 
+            journeyToSave.PassengerRoutes.ForEach(pr => pr.Destination = journeyToSave.Destination);
+            
             journeyToSave.UserId = userId;
+
+            journeyToSave.CarId = car.Id;
 
             _journeyRepository.Add(journeyToSave);
 
@@ -125,14 +128,22 @@ namespace DriverExpansesTracker.Services.Services
             }
         }
 
-        //public PagedList<Journey> GetPagedJourneys(string userId, JourneyResourceParameters resourceParameters)
-        //{
-        //    return null;
-        //}
+        public PagedList<JourneyDto> GetPagedJourneys(string userId, ResourceParameters resourceParameters, int carId)
+        {
+                var journeysFromRepo = _journeyRepository.FindBy(j => j.CarId == carId && j.UserId == userId);
 
-        //public IEnumerable<JourneyDto> GetJourneys(PagedList<Journey> pagedList)
-        //{
-        //    return null;
-        //}
+                var journeysToReturn = Mapper.Map<IEnumerable<JourneyDto>>(journeysFromRepo);
+
+                return new PagedList<JourneyDto>(journeysToReturn.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);            
+        }
+
+        public PagedList<JourneyDto> GetPagedJourneys(string userId, ResourceParameters resourceParameters)
+        {
+            var journeysFromRepo = _journeyRepository.FindBy(j => j.UserId == userId);
+
+            var journeysToReturn = Mapper.Map<IEnumerable<JourneyDto>>(journeysFromRepo);
+
+            return new PagedList<JourneyDto>(journeysToReturn.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);
+        }
     }
 }

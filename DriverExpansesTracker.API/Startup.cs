@@ -90,7 +90,7 @@ namespace DriverExpansesTracker.API
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("User", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
+                options.AddPolicy("User", policy => policy.RequireClaim(Constants.JWT.JwtClaimIdentifiers.Rol, Constants.JWT.JwtClaims.ApiAccess));
             });
 
 

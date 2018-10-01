@@ -26,6 +26,7 @@ namespace DriverExpansesTracker.API.Controllers
         private IPassengerRouteService _passengerRouteService;
         private IPaymentService _paymentService;
 
+
         public JourneysController(IUserService userService,
             IJourneyService journeyService,
             ICarService carService,
@@ -40,8 +41,8 @@ namespace DriverExpansesTracker.API.Controllers
             _paymentService = paymentService;
         }
         [HttpGet]
-        [Route("cars/{carId}/journeys")]
-        [Route("journeys",Name ="GetJourneys")]
+        [Route("cars/{carId}/journeys", Name = Constants.RouteNames.GetJourneysByCar)]
+        [Route("journeys",Name = Constants.RouteNames.GetJourneys)]
 
 
         public IActionResult GetJourneys(string userId, ResourceParameters resourceParameters,int? carId = null)
@@ -54,9 +55,14 @@ namespace DriverExpansesTracker.API.Controllers
                     return NotFound();
                 }
 
-                var journeys = _journeyService.GetJourneys(userId);
+                var pagedJourneys = _journeyService.GetPagedJourneys(userId,resourceParameters);
 
-                return Ok(journeys);
+                pagedJourneys.Header.NextPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.PreviousPage) : null;
+                pagedJourneys.Header.NextPageLink = pagedJourneys.HasNext ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.NextPage) : null;
+
+                Response.Headers.Add("X-Pagination", pagedJourneys.Header.ToJson());
+
+                return Ok(pagedJourneys.ToList());
 
             }
             else
@@ -66,15 +72,18 @@ namespace DriverExpansesTracker.API.Controllers
                     return NotFound();
                 }
 
-                //var pagedJourneys = 
+                var pagedJourneys = _journeyService.GetPagedJourneys(userId, resourceParameters, carId.Value);
 
-                var journeys = _journeyService.GetJourneys(userId, (int)carId);
+                pagedJourneys.Header.NextPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.PreviousPage) : null;
+                pagedJourneys.Header.NextPageLink = pagedJourneys.HasNext ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.NextPage) : null;
 
-                return Ok(journeys);
+                Response.Headers.Add("X-Pagination", pagedJourneys.Header.ToJson());
+
+                return Ok(pagedJourneys.ToList());
             }
         }
         [HttpGet]
-        [Route("cars/{carId}/journeys/{id}", Name = "GetJourney")]
+        [Route("cars/{carId}/journeys/{id}", Name = Constants.RouteNames.GetJourney)]
         [Route("journeys/{id}")]
         public IActionResult GetJourney(string userId, int id, int? carId = null)
         {
@@ -113,10 +122,10 @@ namespace DriverExpansesTracker.API.Controllers
             }
 
         }
-        [HttpPost, Route("journeys")]
-        public IActionResult CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, string userId)
+        [HttpPost, Route("cars/{carId}/journeys")]
+        public IActionResult CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, string userId,int carId)
         {
-            var car = _carService.GetCar(userId, journeyFromBody.CarId,true);
+            var car = _carService.GetCar(userId, carId,true);
 
             if (car == null)
             {
@@ -138,7 +147,7 @@ namespace DriverExpansesTracker.API.Controllers
                 return BadRequest(ModelState);
             }          
 
-            var journey = _journeyService.AddJourney(userId,journeyFromBody);
+            var journey = _journeyService.AddJourney(userId,journeyFromBody,car);
 
             _journeyService.SetTotalPrices(journey, car.FuelConsumption100km, journeyFromBody.PriceForLiter);
 

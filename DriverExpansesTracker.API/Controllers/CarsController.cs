@@ -42,7 +42,7 @@ namespace DriverExpansesTracker.API.Controllers
             return Ok(cars);
         }
 
-        [HttpGet("{id}", Name = "GetCar")]
+        [HttpGet("{id}", Name = Constants.RouteNames.GetCar)]
         public IActionResult GetCar(string userId, int id, bool onlyActive = true)
         {
             var car = _carService.GetCar(userId, id, onlyActive);
@@ -68,7 +68,7 @@ namespace DriverExpansesTracker.API.Controllers
 
             var carToRetrun = _carService.AddCar(carFromBody, userId);
 
-            return CreatedAtRoute("GetCar", new { userId = userId, id = carToRetrun.Id }, carToRetrun);
+            return CreatedAtRoute(Constants.RouteNames.GetCar, new { userId = userId, id = carToRetrun.Id }, carToRetrun);
         }
 
         [HttpDelete("{id}")]
@@ -110,7 +110,7 @@ namespace DriverExpansesTracker.API.Controllers
 
             if (!ModelState.IsValid)
             {
-                return new UnprocessableEntityActionResult(ModelState);
+                return new UnprocessableEntityObjectresult(ModelState);
             }
 
             _carService.UpdateCar(carFromRepo,carForUpdate);

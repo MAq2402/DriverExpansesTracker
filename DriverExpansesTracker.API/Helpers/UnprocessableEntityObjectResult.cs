@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DriverExpansesTracker.API.Helpers
 {
-    public class UnprocessableEntityActionResult: ObjectResult
+    public class UnprocessableEntityObjectresult: ObjectResult
     {
-        public UnprocessableEntityActionResult(ModelStateDictionary modelState):base(new SerializableError(modelState))
+        public UnprocessableEntityObjectresult(ModelStateDictionary modelState):base(new SerializableError(modelState))
         {
             if (modelState == null)
             {
