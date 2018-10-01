@@ -35,17 +35,6 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<JourneyDto>(journey);
         }
 
-        public IEnumerable<JourneyDto> GetJourneys(string userId)
-        {
-            var journeys = _journeyRepository.FindBy(j => j.UserId == userId);
-            return Mapper.Map<IEnumerable<JourneyDto>>(journeys);
-        }
-
-        public IEnumerable<JourneyDto> GetJourneys(string userId, int carId)
-        {
-            var journeys = _journeyRepository.FindBy(j => j.UserId == userId&&j.CarId==carId);
-            return Mapper.Map<IEnumerable<JourneyDto>>(journeys);
-        }
 
         public bool JourneyExists(string userId, int id)
         {
