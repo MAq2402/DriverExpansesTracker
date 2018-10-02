@@ -8,16 +8,16 @@ namespace DriverExpansesTracker.Services.Models.Journey
 {
     public class JourneyForCreationDto
     {
-        [Required, MaxLength(50)]
+        [Required]
         public string Destination { get; set; }
 
-        [Required, MaxLength(50)]
+        [Required]
         public string Start { get; set; }
 
-        [Required, Range(1, 400000)]
+        [Required]
         public int Length { get; set; }
 
-        [Required, Range(0, 200)]
+        [Required]
         public decimal PriceForLiter { get; set; }
         public ICollection<PassengerRouteForCreationDto> Routes { get; set; } = new List<PassengerRouteForCreationDto>();
     }

@@ -89,22 +89,6 @@ namespace DriverExpansesTracker.API.Controllers
             return CreatedAtRoute(Constants.RouteNames.GetUserByName,new { userName = userToReturn.UserName },userToReturn);
         }
 
-        [HttpPost("currentIdentity")]
-        public IActionResult GetCurrentIdentity([FromBody] Services.Models.Auth.Token token)
-        {
-            var tokenS = new JwtSecurityTokenHandler().ReadToken(token.Value) as JwtSecurityToken;
-            var sub = tokenS?.Claims.First(claim => claim.Type == "sub")?.Value;
-
-            var user = _userService.GetUserByName(sub);
-
-            if (user == null)
-            {
-                return NoContent();
-            }
-
-            return Ok(user);
-        }
-
         [HttpGet("currentIdentity")]
         public IActionResult GetCurrentIdentity()
         {
