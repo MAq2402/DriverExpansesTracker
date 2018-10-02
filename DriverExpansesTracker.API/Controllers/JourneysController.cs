@@ -159,6 +159,20 @@ namespace DriverExpansesTracker.API.Controllers
 
             return CreatedAtRoute(Constants.RouteNames.GetJourney, new {  userId=userId, id = journey.Id, carId = journey.CarId  }, journeyToReturn);
         }
+
+        [HttpDelete("journeys/{id}")]
+
+        public IActionResult DeleteJourney(string userId,int id)
+        {
+            if (!_journeyService.JourneyExists(userId, id))
+            {
+                return NotFound();
+            }
+
+            _journeyService.DeleteJourney(userId, id);
+
+            return NoContent();
+        }
     }
 
 }

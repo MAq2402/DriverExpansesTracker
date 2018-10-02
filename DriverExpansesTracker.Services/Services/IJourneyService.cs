@@ -20,5 +20,6 @@ namespace DriverExpansesTracker.Services.Services
         PagedList<JourneyDto> GetPagedJourneys(string userId, ResourceParameters resourceParameters, int carId);
         PagedList<JourneyDto> GetPagedJourneys(string userId, ResourceParameters resourceParameters);
         bool JourneyExists(int journeyId);
+        void DeleteJourney(string userId, int id);
     }
 }

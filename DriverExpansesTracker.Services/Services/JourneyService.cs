@@ -136,5 +136,17 @@ namespace DriverExpansesTracker.Services.Services
         {
             return _journeyRepository.FindBy(j => j.Id == journeyId).Any();
         }
+
+        public void DeleteJourney(string userId, int id)
+        {
+            var journey = _journeyRepository.FindSingleBy(j => j.Id == id && j.UserId == userId);
+
+            _journeyRepository.Delete(journey);
+
+            if (!_journeyRepository.Save())
+            {
+                throw new Exception("Could not delete journey");
+            }
+        }
     }
 }

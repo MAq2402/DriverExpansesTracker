@@ -22,7 +22,7 @@ namespace DriverExpansesTracker.API.Controllers
     [EnableCors("MyPolicy")]
     [Authorize(Policy = "User")]
 
-    public class UsersController:BaseController
+    public class UsersController : BaseController
     {
         private UserManager<User> _userManager;
         private IUserService _userService;
@@ -44,12 +44,12 @@ namespace DriverExpansesTracker.API.Controllers
 
             return Ok(pagedUsers);
         }
-        [HttpGet("byName/{userName}",Name = Constants.RouteNames.GetUserByName)]
+        [HttpGet("byName/{userName}", Name = Constants.RouteNames.GetUserByName)]
         public IActionResult GetUserByName(string userName)
         {
             var user = _userService.GetUserByName(userName);
 
-            if(user==null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -79,21 +79,21 @@ namespace DriverExpansesTracker.API.Controllers
 
             var result = await _userManager.CreateAsync(userToSave, userFromBody.Password);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 return BadRequest();
             }
 
             var userToReturn = _userService.GetUser(userToSave);
 
-            return CreatedAtRoute(Constants.RouteNames.GetUserByName,new { userName = userToReturn.UserName },userToReturn);
+            return CreatedAtRoute(Constants.RouteNames.GetUserByName, new { userName = userToReturn.UserName }, userToReturn);
         }
 
         [HttpGet("currentIdentity")]
         public IActionResult GetCurrentIdentity()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
-            
+
 
             var user = string.IsNullOrEmpty(userId) ? null : _userService.GetUserById(userId);
 
