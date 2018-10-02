@@ -118,6 +118,8 @@ namespace DriverExpansesTracker.Services.Services
         {
                 var journeysFromRepo = _journeyRepository.FindBy(j => j.CarId == carId && j.UserId == userId);
 
+                journeysFromRepo = FilterJourneys(resourceParameters.Destination, resourceParameters.Start, journeysFromRepo);
+
                 var journeysToReturn = Mapper.Map<IEnumerable<JourneyDto>>(journeysFromRepo);
 
                 return new PagedList<JourneyDto>(journeysToReturn.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);            
@@ -127,10 +129,27 @@ namespace DriverExpansesTracker.Services.Services
         {
             var journeysFromRepo = _journeyRepository.FindBy(j => j.UserId == userId);
 
+            journeysFromRepo = FilterJourneys(resourceParameters.Destination,resourceParameters.Start,journeysFromRepo);
+
             var journeysToReturn = Mapper.Map<IEnumerable<JourneyDto>>(journeysFromRepo);
 
             return new PagedList<JourneyDto>(journeysToReturn.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);
         }
+
+        private IQueryable<Journey> FilterJourneys(string destination, string start, IQueryable<Journey> journeys)
+        {
+            if (!string.IsNullOrEmpty(destination))
+            {
+                journeys = journeys.Where(j => j.Destination.ToLowerInvariant() == destination.ToLowerInvariant());
+            }
+            if (!string.IsNullOrEmpty(start))
+            {
+                journeys = journeys.Where(j => j.Start.ToLowerInvariant() == start.ToLowerInvariant());
+            }
+
+            return journeys;
+        }
+
 
         public bool JourneyExists(int journeyId)
         {

@@ -57,7 +57,7 @@ namespace DriverExpansesTracker.API.Controllers
 
                 var pagedJourneys = _journeyService.GetPagedJourneys(userId,resourceParameters);
 
-                pagedJourneys.Header.NextPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.PreviousPage) : null;
+                pagedJourneys.Header.PreviousPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.PreviousPage) : null;
                 pagedJourneys.Header.NextPageLink = pagedJourneys.HasNext ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.NextPage) : null;
 
                 Response.Headers.Add(Constants.Headers.XPagination, pagedJourneys.Header.ToJson());
@@ -74,7 +74,7 @@ namespace DriverExpansesTracker.API.Controllers
 
                 var pagedJourneys = _journeyService.GetPagedJourneys(userId, resourceParameters, carId.Value);
 
-                pagedJourneys.Header.NextPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.PreviousPage) : null;
+                pagedJourneys.Header.PreviousPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.PreviousPage) : null;
                 pagedJourneys.Header.NextPageLink = pagedJourneys.HasNext ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.NextPage) : null;
 
                 Response.Headers.Add(Constants.Headers.XPagination, pagedJourneys.Header.ToJson());

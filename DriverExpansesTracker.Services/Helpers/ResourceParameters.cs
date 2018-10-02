@@ -23,5 +23,8 @@ namespace DriverExpansesTracker.Services.Helpers
         }
 
         public string Search { get; set; }
+
+        public string Start { get; set; }
+        public string Destination { get; set; }
     }
 }

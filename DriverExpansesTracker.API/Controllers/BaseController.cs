@@ -27,14 +27,18 @@ namespace DriverExpansesTracker.API.Controllers
                     {
                         pageNumber = resourceParameters.PageNumber - 1,
                         pageSize = resourceParameters.PageSize,
-                        search = resourceParameters.Search
+                        search = resourceParameters.Search,
+                        start = resourceParameters.Start,
+                        destination = resourceParameters.Destination
                     });
                 case ResourceUriType.NextPage:
                     return _urlHelper.Link(routeName, new
                     {
                         pageNumber = resourceParameters.PageNumber + 1,
                         pageSize = resourceParameters.PageSize,
-                        search = resourceParameters.Search
+                        search = resourceParameters.Search,
+                        start = resourceParameters.Start,
+                        destination = resourceParameters.Destination
                     });
                 default:
                     return _urlHelper.Link(routeName, new
