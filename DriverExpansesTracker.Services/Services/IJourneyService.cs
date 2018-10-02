@@ -19,5 +19,6 @@ namespace DriverExpansesTracker.Services.Services
         void SetTotalPrices(Journey journey, double fuelConsumption100Km, decimal priceForLiter);
         PagedList<JourneyDto> GetPagedJourneys(string userId, ResourceParameters resourceParameters, int carId);
         PagedList<JourneyDto> GetPagedJourneys(string userId, ResourceParameters resourceParameters);
+        bool JourneyExists(int journeyId);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DriverExpansesTracker.API.Filters;
+using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -30,30 +31,41 @@ namespace DriverExpansesTracker.API.Controllers
         }
 
         [HttpGet]
-        [Route("passengerRoutes")]
-        [Route("journeys/{journeyId}/passengerRoutes")]
-
-        public IActionResult GetPassengerRoutes(string userId, int? journeyId)
+        [Route("passengerRoutes", Name = Constants.RouteNames.GetPassengerRoutes)]
+        [Route("journeys/{journeyId}/passengerRoutes", Name = Constants.RouteNames.GetPassengerRoutesByJourney)]
+        public IActionResult GetPassengerRoutes(string userId, int? journeyId,ResourceParameters resourceParameters)
         {
-            if (journeyId != null)
+            // has to check if user exists for both, because journey is not connected with this particular user
+            if (!_userService.UserExists(userId))
             {
-                if(!_journeyService.JourneyExists(userId,(int)journeyId))
+                return NotFound();
+            }
+
+            if (journeyId.HasValue)
+            {
+                if(!_journeyService.JourneyExists(journeyId.Value))
                 {
                     return NotFound();
                 }
-                var routes = _passengerRouteService.GetRoutes(userId, (int)journeyId);
+                var pagedRoutes = _passengerRouteService.GetPagedRoutes(userId, journeyId.Value, resourceParameters);
 
-                return Ok(routes);
+                pagedRoutes.Header.PreviousPageLink = pagedRoutes.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetPassengerRoutesByJourney, resourceParameters, ResourceUriType.PreviousPage) : null;
+                pagedRoutes.Header.NextPageLink = pagedRoutes.HasNext ? CreateResourceUri(Constants.RouteNames.GetPassengerRoutesByJourney, resourceParameters, ResourceUriType.NextPage) : null;
+
+                Response.Headers.Add(Constants.Headers.XPagination, pagedRoutes.Header.ToJson());
+
+                return Ok(pagedRoutes.ToList());
             }
             else
             {
-                if (!_userService.UserExists(userId))
-                {
-                    return NotFound();
-                }
-                var routes = _passengerRouteService.GetRoutes(userId);
+                var pagedRoutes = _passengerRouteService.GetPagedRoutes(userId,resourceParameters);
 
-                return Ok(routes);
+                pagedRoutes.Header.PreviousPageLink = pagedRoutes.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetPassengerRoutes, resourceParameters, ResourceUriType.PreviousPage) : null;
+                pagedRoutes.Header.NextPageLink = pagedRoutes.HasNext ? CreateResourceUri(Constants.RouteNames.GetPassengerRoutes, resourceParameters, ResourceUriType.NextPage) : null;
+
+                Response.Headers.Add(Constants.Headers.XPagination, pagedRoutes.Header.ToJson());
+
+                return Ok(pagedRoutes.ToList());
             }
         }
 
@@ -62,16 +74,20 @@ namespace DriverExpansesTracker.API.Controllers
         [Route("journeys/{journeyId}/passengerRoutes/{id}")]
         public IActionResult GetPassengerRoute(string userId, int id,  int? journeyId)
         {
-            
+            // has to check if user exists for both, because journey is not connected with this particular user
+            if (!_userService.UserExists(userId)) 
+            {
+                return NotFound();
+            }
 
-            if (journeyId != null)
+            if (journeyId.HasValue)
             {
 
-                if (!_journeyService.JourneyExists(userId, (int)journeyId))
+                if (!_journeyService.JourneyExists(journeyId.Value))
                 {
                     return NotFound();
                 }
-                var route = _passengerRouteService.GetRoute(userId, (int)journeyId,id);
+                var route = _passengerRouteService.GetRoute(userId, journeyId.Value ,id);
 
                 if(route==null)
                 {
@@ -82,10 +98,7 @@ namespace DriverExpansesTracker.API.Controllers
             }
             else
             {
-                if (!_userService.UserExists(userId))
-                {
-                    return NotFound();
-                }
+               
                 var route = _passengerRouteService.GetRoute(userId,id);
 
                 if (route == null)

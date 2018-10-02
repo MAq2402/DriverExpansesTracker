@@ -131,5 +131,10 @@ namespace DriverExpansesTracker.Services.Services
 
             return new PagedList<JourneyDto>(journeysToReturn.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);
         }
+
+        public bool JourneyExists(int journeyId)
+        {
+            return _journeyRepository.FindBy(j => j.Id == journeyId).Any();
+        }
     }
 }

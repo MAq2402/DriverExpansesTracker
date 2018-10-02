@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
+using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.PassengerRoute;
 using System;
 using System.Collections.Generic;
@@ -19,21 +20,6 @@ namespace DriverExpansesTracker.Services.Services
             _routeRepository = routeRepository;
             _userRepository = userRepository;
         }
-
-        public IEnumerable<PassengerRouteDto> GetRoutes(string userId)
-        {
-            var routes = _routeRepository.FindBy(r => r.UserId == userId)
-                                         .OrderByDescending(p => p.DateTime);
-            return Mapper.Map<IEnumerable<PassengerRouteDto>>(routes);
-        }
-
-        public IEnumerable<PassengerRouteDto> GetRoutes(string userId, int journeyId)
-        {
-            var routes = _routeRepository.FindBy(r => r.UserId == userId && r.JourneyId == journeyId)
-                                         .OrderByDescending(p => p.DateTime);
-            return Mapper.Map<IEnumerable<PassengerRouteDto>>(routes);
-        }
-
         public PassengerRouteDto GetRoute(string userId, int journeyId, int id)
         {
             var route = _routeRepository.FindSingleBy(r => r.UserId == userId && r.JourneyId == journeyId && r.Id == id);
@@ -77,6 +63,26 @@ namespace DriverExpansesTracker.Services.Services
                 userIds.Add(route.UserId);
             }
             return false;
+        }
+
+        public PagedList<PassengerRouteDto> GetPagedRoutes(string userId, int journeyId, ResourceParameters resourceParameters)
+        {
+            var routesFromRepo = _routeRepository.FindBy(r => r.UserId == userId && r.JourneyId == journeyId)
+                                                 .OrderByDescending(r => r.DateTime);
+
+            var routesDtos = Mapper.Map<IEnumerable<PassengerRouteDto>>(routesFromRepo);
+
+            return new PagedList<PassengerRouteDto>(routesDtos.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);
+        }
+
+        public PagedList<PassengerRouteDto> GetPagedRoutes(string userId, ResourceParameters resourceParameters)
+        {
+            var routesFromRepo = _routeRepository.FindBy(r => r.UserId == userId)
+                                                 .OrderByDescending(r=>r.DateTime);
+
+            var routesDtos = Mapper.Map<IEnumerable<PassengerRouteDto>>(routesFromRepo);
+
+            return new PagedList<PassengerRouteDto>(routesDtos.AsQueryable(), resourceParameters.PageNumber,resourceParameters.PageSize);
         }
     }
 }

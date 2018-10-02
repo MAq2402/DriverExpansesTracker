@@ -29,6 +29,8 @@ namespace DriverExpansesTracker.API
             public const string GetJourney = "GetJourney";
             public const string GetPayments = "GetPayments";
             public const string GetPaymentsByJourney = "GetPaymentsByJourney";
+            public const string GetPassengerRoutes = "GetPassengerRoutes";
+            public const string GetPassengerRoutesByJourney = "GetPassengerRoutesByJourney";
         }
 
         public static class Headers
