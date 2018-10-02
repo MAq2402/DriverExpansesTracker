@@ -38,11 +38,8 @@ namespace DriverExpansesTracker.Services.Services
 
         public bool JourneyExists(string userId, int id)
         {
-           if(_journeyRepository.FindBy(j=>j.UserId==userId&&j.Id==id).Any())
-            {
-                return true;
-            }
-            return false;
+            return _journeyRepository.FindBy(j => j.UserId == userId && j.Id == id).Any();
+ 
         }
 
         public Journey AddJourney(string userId, JourneyForCreationDto journey,CarDto car)

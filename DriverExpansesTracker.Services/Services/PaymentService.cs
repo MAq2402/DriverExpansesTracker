@@ -42,15 +42,6 @@ namespace DriverExpansesTracker.Services.Services
 
             return new PagedList<PaymentDto>(payments, resourceParameters.PageNumber, resourceParameters.PageSize);               
         }
-
-        public IEnumerable<PaymentDto> GetPayments(string userId, int journeyId)
-        {
-            var payments = _paymentRepository.FindBy(p => p.JourneyId==journeyId&&( p.ReceiverId == userId || p.PayerId == userId))
-                                               .OrderByDescending(p => p.DateTime);
-
-            return Mapper.Map<IEnumerable<PaymentDto>>(payments);
-        }
-
         public IEnumerable<Payment> AddPayments(Journey journey)
         {
             var payments = new List<Payment>();
@@ -79,5 +70,14 @@ namespace DriverExpansesTracker.Services.Services
             return payments;
         }
 
+        public PagedList<PaymentDto> GetPagedPaymentsByJourneys(string userId, int journeyId, ResourceParameters resourceParameters)
+        {
+            var paymentsFromRepo = _paymentRepository.FindBy(p => (p.PayerId == userId || p.ReceiverId == userId) && p.JourneyId == journeyId)
+                                                      .OrderByDescending(p=>p.DateTime);
+
+            var paymentsDtos = Mapper.Map<IEnumerable<PaymentDto>>(paymentsFromRepo);
+
+            return new PagedList<PaymentDto>(paymentsDtos.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);
+        }
     }
 }

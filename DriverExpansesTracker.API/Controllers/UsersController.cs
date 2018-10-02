@@ -40,7 +40,7 @@ namespace DriverExpansesTracker.API.Controllers
             pagedUsers.Header.PreviousPageLink = pagedUsers.HasPrevious ? CreateResourceUri(nameof(GetUsers), resourceParameters, ResourceUriType.PreviousPage) : null;
             pagedUsers.Header.NextPageLink = pagedUsers.HasNext ? CreateResourceUri(nameof(GetUsers), resourceParameters, ResourceUriType.NextPage) : null;
 
-            Response.Headers.Add("X-Pagination", pagedUsers.Header.ToJson());
+            Response.Headers.Add(Constants.Headers.XPagination, pagedUsers.Header.ToJson());
 
             return Ok(pagedUsers);
         }

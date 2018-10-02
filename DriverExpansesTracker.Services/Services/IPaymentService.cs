@@ -11,7 +11,7 @@ namespace DriverExpansesTracker.Services.Services
     {
         PaymentDto GetPayment(string userId, int id);
         PagedList<PaymentDto> GetPagedPayments(string userId,ResourceParameters resourceParameters);
-        IEnumerable<PaymentDto> GetPayments(string userId, int journeyId);
+        PagedList<PaymentDto> GetPagedPaymentsByJourneys(string userId, int journeyId, ResourceParameters resourceParameters);
         PaymentDto GetPayment(string userId, int journeyId, int id);
         IEnumerable<Payment> AddPayments(Journey journey);
         

@@ -60,7 +60,7 @@ namespace DriverExpansesTracker.API.Controllers
                 pagedJourneys.Header.NextPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.PreviousPage) : null;
                 pagedJourneys.Header.NextPageLink = pagedJourneys.HasNext ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.NextPage) : null;
 
-                Response.Headers.Add("X-Pagination", pagedJourneys.Header.ToJson());
+                Response.Headers.Add(Constants.Headers.XPagination, pagedJourneys.Header.ToJson());
 
                 return Ok(pagedJourneys.ToList());
 
@@ -77,7 +77,7 @@ namespace DriverExpansesTracker.API.Controllers
                 pagedJourneys.Header.NextPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.PreviousPage) : null;
                 pagedJourneys.Header.NextPageLink = pagedJourneys.HasNext ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.NextPage) : null;
 
-                Response.Headers.Add("X-Pagination", pagedJourneys.Header.ToJson());
+                Response.Headers.Add(Constants.Headers.XPagination, pagedJourneys.Header.ToJson());
 
                 return Ok(pagedJourneys.ToList());
             }
@@ -157,7 +157,7 @@ namespace DriverExpansesTracker.API.Controllers
 
             var journeyToReturn = _journeyService.GetJourney(journey);
 
-            return CreatedAtRoute("GetJourney", new {  userId=userId, id = journey.Id, carId = journey.CarId  }, journeyToReturn);
+            return CreatedAtRoute(Constants.RouteNames.GetJourney, new {  userId=userId, id = journey.Id, carId = journey.CarId  }, journeyToReturn);
         }
     }
 

@@ -27,6 +27,13 @@ namespace DriverExpansesTracker.API
             public const string GetUserByName = "GetUserByName";
             public const string GetUserById = "GetUserById";
             public const string GetJourney = "GetJourney";
+            public const string GetPayments = "GetPayments";
+            public const string GetPaymentsByJourney = "GetPaymentsByJourney";
+        }
+
+        public static class Headers
+        {
+            public const string XPagination = "X-Pagination";
         }
     }
 }

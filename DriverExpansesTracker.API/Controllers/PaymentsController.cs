@@ -23,32 +23,39 @@ namespace DriverExpansesTracker.API.Controllers
         private IUserService _userService;
         private IPaymentService _paymentService;
         private IJourneyService _journeyService;
+        private ICarService _carService;
 
         public PaymentsController(IUserService userService, 
                                   IPaymentService paymentService,
                                   IJourneyService journeyService,
-                                  IUrlHelper urlHelper):base(urlHelper)
+                                  IUrlHelper urlHelper,
+                                  ICarService carService):base(urlHelper)
         {
             _userService = userService;
             _paymentService = paymentService;
             _journeyService = journeyService;
+            _carService = carService;
         }
 
         [HttpGet]
-        [Route("payments",Name = "GetPayments")]
-        [Route("journeys/{journeyId}/payments")]
-        public IActionResult GetPayments(string userId,int ?journeyId,ResourceParameters resourceParameters)
+        [Route("payments",Name = Constants.RouteNames.GetPayments)]
+        [Route("journeys/{journeyId}/payments" , Name = Constants.RouteNames.GetPaymentsByJourney)]
+        public IActionResult GetPayments(string userId,int ?journeyId, int?carId,ResourceParameters resourceParameters)
         {
-            //Apply paging too!
-            if (journeyId != null)
+            if (journeyId.HasValue)
             {
-                if(!_journeyService.JourneyExists(userId,(int)journeyId))
+                if(!_journeyService.JourneyExists(userId,journeyId.Value))
                 {
                     return NotFound();
                 }
-                var payments = _paymentService.GetPayments(userId,(int)journeyId);
+                var pagedPayments = _paymentService.GetPagedPaymentsByJourneys(userId, journeyId.Value, resourceParameters);
 
-                return Ok(payments);
+                pagedPayments.Header.PreviousPageLink = pagedPayments.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetPaymentsByJourney, resourceParameters,ResourceUriType.PreviousPage) : null;
+                pagedPayments.Header.PreviousPageLink = pagedPayments.HasNext ? CreateResourceUri(Constants.RouteNames.GetPaymentsByJourney, resourceParameters, ResourceUriType.NextPage) : null;
+
+                Response.Headers.Add(Constants.Headers.XPagination, pagedPayments.Header.ToJson());
+
+                return Ok(pagedPayments.ToList());
             }
             else
             {
@@ -56,12 +63,12 @@ namespace DriverExpansesTracker.API.Controllers
                 {
                     return NotFound();
                 }
-                var pagedPayments = _paymentService.GetPagedPayments(userId,resourceParameters);
+                var pagedPayments = _paymentService.GetPagedPayments(userId, resourceParameters);
 
-                pagedPayments.Header.PreviousPageLink = pagedPayments.HasPrevious ? CreateResourceUri("GetPayments", resourceParameters, ResourceUriType.PreviousPage) : null;
-                pagedPayments.Header.NextPageLink = pagedPayments.HasNext ? CreateResourceUri("GetPayments", resourceParameters, ResourceUriType.NextPage) : null;
+                pagedPayments.Header.PreviousPageLink = pagedPayments.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetPayments, resourceParameters, ResourceUriType.PreviousPage) : null;
+                pagedPayments.Header.NextPageLink = pagedPayments.HasNext ? CreateResourceUri(Constants.RouteNames.GetPayments, resourceParameters, ResourceUriType.NextPage) : null;
 
-                Response.Headers.Add("X-Pagination", pagedPayments.Header.ToJson());
+                Response.Headers.Add(Constants.Headers.XPagination, pagedPayments.Header.ToJson());
 
                 return Ok(pagedPayments.ToList());
             }
@@ -69,22 +76,18 @@ namespace DriverExpansesTracker.API.Controllers
 
         [HttpGet]
         [Route("payments/{id}")]
+        [Route("journeys/{journeyId}/payments/{id}")]
         public IActionResult GetPayment(string userId, int id,int? journeyId)
         {
-            if (!_userService.UserExists(userId))
-            {
-                return NotFound();
-            }
 
-
-            if (journeyId != null)
+            if (journeyId.HasValue)
             {
-                if (!_journeyService.JourneyExists(userId, (int)journeyId))
+                if (!_journeyService.JourneyExists(userId, journeyId.Value))
                 {
                     return NotFound();
                 }
 
-                var payment = _paymentService.GetPayment(userId, (int)journeyId,id);
+                var payment = _paymentService.GetPayment(userId, journeyId.Value,id);
 
                 if (payment == null)
                 {
