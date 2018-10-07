@@ -21,13 +21,13 @@ namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/auth")]
     [EnableCors("MyPolicy")]
-    public class AuthController : BaseController
+    public class AuthController : Controller
     {
         private readonly UserManager<User> _userManager;
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
 
-        public AuthController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IUrlHelper urlHelper) :base(urlHelper)
+        public AuthController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;

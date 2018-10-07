@@ -9,6 +9,7 @@ using DriverExpansesTracker.API.Filters;
 using DriverExpansesTracker.API.Infrastructure;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
+using DriverExpansesTracker.Services.Models.Car;
 using DriverExpansesTracker.Services.Services;
 using DriveTracker.DbContexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,6 +28,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RiskFirst.Hateoas;
+using RiskFirst.Hateoas.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace DriverExpansesTracker.API
@@ -134,6 +137,8 @@ namespace DriverExpansesTracker.API
                 var actionContext = implementationFactory.GetService<IActionContextAccessor>().ActionContext;
                 return new UrlHelper(actionContext);
             });
+
+            services.AddHateoas();
 
             
             

@@ -31,6 +31,19 @@ namespace DriverExpansesTracker.API
             public const string GetPaymentsByJourney = "GetPaymentsByJourney";
             public const string GetPassengerRoutes = "GetPassengerRoutes";
             public const string GetPassengerRoutesByJourney = "GetPassengerRoutesByJourney";
+            public const string GetCars = "GetCars";
+            public const string CreateCar = "CreateCar";
+            public const string ChangeStatusToInactive = "ChangeStatusToInactive";
+            public const string PartiallyUpdateCar = "PartiallyUpdateCar";
+            public const string CreateJourney = "CreateJourney";
+            public const string DeleteJourney = "DeleteJourney";
+            public const string GetJourneyByCar = "GetJourneyByCar";
+            public const string GetUsers = "GetUsers";
+            public const string GetPassengerRouteByJourney = "GetPassengerRouteByJourney";
+            public const string GetPassengerRoute = "GetPassengerRoute";
+            public const string CreateUser = "CreateUser";
+            public const string GetPaymentByJourney = "GetPaymentByJourney";
+            public const string GetPayment = "GetPayment";
         }
 
         public static class Headers

@@ -21,7 +21,17 @@ namespace DriverExpansesTracker.Repository.Entities
         public double FuelConsumption100km { get; set; }
         public List<Journey> Journeys { get; set; } = new List<Journey>();
         public FuelType FuelType { get; set; }
-        public bool Active { get; set; } = true;
+        public bool Active { get; private set; } = true;
+
+        public void Disactivate()
+        {
+            if (!Active)
+            {
+                throw new InvalidOperationException("Car has already been disactivated");
+            }
+
+            Active = false;
+        }
 
     }
 }

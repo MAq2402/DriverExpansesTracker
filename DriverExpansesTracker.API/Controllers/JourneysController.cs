@@ -9,6 +9,7 @@ using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using RiskFirst.Hateoas;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,7 +33,7 @@ namespace DriverExpansesTracker.API.Controllers
             ICarService carService,
             IPassengerRouteService passengerRouteService,
             IPaymentService paymentService,
-            IUrlHelper urlHelper):base(urlHelper)
+            IUrlHelper urlHelper,ILinksService linksService):base(urlHelper,linksService)
         {
             _userService = userService;
             _journeyService = journeyService;
@@ -40,55 +41,43 @@ namespace DriverExpansesTracker.API.Controllers
             _passengerRouteService = passengerRouteService;
             _paymentService = paymentService;
         }
-        [HttpGet]
-        [Route("cars/{carId}/journeys", Name = Constants.RouteNames.GetJourneysByCar)]
-        [Route("journeys",Name = Constants.RouteNames.GetJourneys)]
-
-
-        public IActionResult GetJourneys(string userId, ResourceParameters resourceParameters,int? carId = null)
+        [HttpGet("journeys", Name = Constants.RouteNames.GetJourneys)]    
+        public async Task<IActionResult> GetJourneys(string userId, ResourceParameters resourceParameters)
         {
 
-            if (carId == null)
+            if (!_userService.UserExists(userId))
             {
-                if (!_userService.UserExists(userId))
-                {
-                    return NotFound();
-                }
-
-                var pagedJourneys = _journeyService.GetPagedJourneys(userId,resourceParameters);
-
-                pagedJourneys.Header.PreviousPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.PreviousPage) : null;
-                pagedJourneys.Header.NextPageLink = pagedJourneys.HasNext ? CreateResourceUri(Constants.RouteNames.GetJourneys, resourceParameters, ResourceUriType.NextPage) : null;
-
-                Response.Headers.Add(Constants.Headers.XPagination, pagedJourneys.Header.ToJson());
-
-                return Ok(pagedJourneys.ToList());
-
+                return NotFound();
             }
-            else
-            {
-                if (!_carService.CarExists(userId, (int)carId,true))
-                {
-                    return NotFound();
-                }
 
-                var pagedJourneys = _journeyService.GetPagedJourneys(userId, resourceParameters, carId.Value);
+            var pagedJourneys = _journeyService.GetPagedJourneys(userId, resourceParameters);
 
-                pagedJourneys.Header.PreviousPageLink = pagedJourneys.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.PreviousPage) : null;
-                pagedJourneys.Header.NextPageLink = pagedJourneys.HasNext ? CreateResourceUri(Constants.RouteNames.GetJourneysByCar, resourceParameters, ResourceUriType.NextPage) : null;
+            AddPaginationHeader(pagedJourneys, Constants.RouteNames.GetJourneys, resourceParameters);
 
-                Response.Headers.Add(Constants.Headers.XPagination, pagedJourneys.Header.ToJson());
+            await AddLinksToCollectionAsync(pagedJourneys);
 
-                return Ok(pagedJourneys.ToList());
-            }
+            return Ok(pagedJourneys);
         }
-        [HttpGet]
-        [Route("cars/{carId}/journeys/{id}", Name = Constants.RouteNames.GetJourney)]
-        [Route("journeys/{id}")]
-        public IActionResult GetJourney(string userId, int id, int? carId = null)
+
+        [HttpGet("cars/{carId}/journeys", Name = Constants.RouteNames.GetJourneysByCar)]
+        public async Task<IActionResult> GetJourneyByCar(string userId, ResourceParameters resourceParameters, int carId)
         {
-            if (carId == null)
+            if (!_carService.CarExists(userId, carId, true))
             {
+                return NotFound();
+            }
+
+            var pagedJourneys = _journeyService.GetPagedJourneys(userId, resourceParameters, carId);
+
+            AddPaginationHeader(pagedJourneys, Constants.RouteNames.GetJourneysByCar, resourceParameters);
+
+            await AddLinksToCollectionAsync(pagedJourneys);
+
+            return Ok(pagedJourneys);
+        }
+        [HttpGet("journeys/{id}", Name = Constants.RouteNames.GetJourney)]
+        public async Task<IActionResult> GetJourney(string userId, int id)
+        {
                 if (!_userService.UserExists(userId))
                 {
                     return NotFound();
@@ -100,30 +89,32 @@ namespace DriverExpansesTracker.API.Controllers
                 {
                     return NotFound();
                 }
-
+                await _linksService.AddLinksAsync(journey);
                 return Ok(journey);
-            }
-            else
-            {
-                if (!_carService.CarExists(userId, (int)carId,true))
-                {
-                    return NotFound();
-                }
-
-                var journey = _journeyService.GetJourney(userId, (int)carId, id);
-
-
-                if (journey == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(journey);
-            }
-
         }
-        [HttpPost, Route("cars/{carId}/journeys")]
-        public IActionResult CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, string userId,int carId)
+
+        [HttpGet("cars/{carId}/journeys/{id}", Name = Constants.RouteNames.GetJourneyByCar)]
+        public async Task<IActionResult> GetJourneyByCar(string userId, int id, int carId)
+        {
+            if (!_carService.CarExists(userId, (int)carId, true))
+            {
+                return NotFound();
+            }
+
+            var journey = _journeyService.GetJourney(userId, (int)carId, id);
+
+
+            if (journey == null)
+            {
+                return NotFound();
+            }
+
+            await _linksService.AddLinksAsync(journey);
+            return Ok(journey);
+        }
+        [HttpPost("cars/{carId}/journeys", Name = Constants.RouteNames.CreateJourney)]
+        [ValidateModelFilter]
+        public async Task<IActionResult> CreateJourney([FromBody]JourneyForCreationDto journeyFromBody, string userId,int carId)
         {
             var car = _carService.GetCar(userId, carId,true);
 
@@ -157,10 +148,12 @@ namespace DriverExpansesTracker.API.Controllers
 
             var journeyToReturn = _journeyService.GetJourney(journey);
 
-            return CreatedAtRoute(Constants.RouteNames.GetJourney, new {  userId=userId, id = journey.Id, carId = journey.CarId  }, journeyToReturn);
+            await _linksService.AddLinksAsync(journeyToReturn);
+
+            return CreatedAtRoute(Constants.RouteNames.GetJourneyByCar, new {  userId=userId, id = journey.Id, carId = journey.CarId  }, journeyToReturn);
         }
 
-        [HttpDelete("journeys/{id}")]
+        [HttpDelete("journeys/{id}", Name =Constants.RouteNames.DeleteJourney)]
 
         public IActionResult DeleteJourney(string userId,int id)
         {

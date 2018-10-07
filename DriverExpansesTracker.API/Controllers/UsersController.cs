@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RiskFirst.Hateoas;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -27,25 +28,24 @@ namespace DriverExpansesTracker.API.Controllers
         private UserManager<User> _userManager;
         private IUserService _userService;
 
-        public UsersController(UserManager<User> userManager, IUserService userService, IUrlHelper urlHelper) : base(urlHelper)
+        public UsersController(UserManager<User> userManager, IUserService userService, IUrlHelper urlHelper, ILinksService linksService) : base(urlHelper,linksService)
         {
             _userManager = userManager;
             _userService = userService;
         }
-        [HttpGet(Name = nameof(GetUsers))]
-        public IActionResult GetUsers(ResourceParameters resourceParameters)
+        [HttpGet(Name =Constants.RouteNames.GetUsers)]
+        public async Task<IActionResult> GetUsers(ResourceParameters resourceParameters)
         {
             var pagedUsers = _userService.GetPagedUsers(resourceParameters);
 
-            pagedUsers.Header.PreviousPageLink = pagedUsers.HasPrevious ? CreateResourceUri(nameof(GetUsers), resourceParameters, ResourceUriType.PreviousPage) : null;
-            pagedUsers.Header.NextPageLink = pagedUsers.HasNext ? CreateResourceUri(nameof(GetUsers), resourceParameters, ResourceUriType.NextPage) : null;
+            AddPaginationHeader(pagedUsers, Constants.RouteNames.GetUsers, resourceParameters);
 
-            Response.Headers.Add(Constants.Headers.XPagination, pagedUsers.Header.ToJson());
+            await AddLinksToCollectionAsync(pagedUsers);
 
             return Ok(pagedUsers);
         }
         [HttpGet("byName/{userName}", Name = Constants.RouteNames.GetUserByName)]
-        public IActionResult GetUserByName(string userName)
+        public async Task<IActionResult> GetUserByName(string userName)
         {
             var user = _userService.GetUserByName(userName);
 
@@ -54,11 +54,13 @@ namespace DriverExpansesTracker.API.Controllers
                 return NotFound();
             }
 
+            await _linksService.AddLinksAsync(user);
+            
             return Ok(user);
         }
 
         [HttpGet("{id}", Name = Constants.RouteNames.GetUserById)]
-        public IActionResult GetUserById(string id)
+        public async Task<IActionResult> GetUserById(string id)
         {
             var user = _userService.GetUserById(id);
 
@@ -66,6 +68,8 @@ namespace DriverExpansesTracker.API.Controllers
             {
                 return NotFound();
             }
+
+            await _linksService.AddLinksAsync(user);
 
             return Ok(user);
         }
@@ -85,6 +89,8 @@ namespace DriverExpansesTracker.API.Controllers
             }
 
             var userToReturn = _userService.GetUser(userToSave);
+
+            await _linksService.AddLinksAsync(userToReturn);
 
             return CreatedAtRoute(Constants.RouteNames.GetUserByName, new { userName = userToReturn.UserName }, userToReturn);
         }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-
+using RiskFirst.Hateoas;
 
 namespace DriverExpansesTracker.API.Controllers
 {
@@ -23,14 +23,14 @@ namespace DriverExpansesTracker.API.Controllers
         private ICarService _carService;
         private IUserService _userService;
 
-        public CarsController(ICarService carService, IUserService userService, IUrlHelper urlHelper):base(urlHelper)
+        public CarsController(ICarService carService, IUserService userService,ILinksService linksService, IUrlHelper urlHelper):base(urlHelper,linksService)
         {
             _carService = carService;
             _userService = userService;
         }
 
-        [HttpGet()]
-        public IActionResult GetCars(string userId, bool onlyActive = true)
+        [HttpGet(Name = Constants.RouteNames.GetCars)]
+        public async Task<IActionResult> GetCars(string userId, bool onlyActive = true)
         {
             if (!_userService.UserExists(userId))
             {
@@ -39,11 +39,15 @@ namespace DriverExpansesTracker.API.Controllers
 
             var cars = _carService.GetCars(userId, onlyActive);
 
+            await AddLinksToCollectionAsync(cars);
+
             return Ok(cars);
         }
 
+      
+
         [HttpGet("{id}", Name = Constants.RouteNames.GetCar)]
-        public IActionResult GetCar(string userId, int id, bool onlyActive = true)
+        public async Task<IActionResult> GetCar(string userId, int id, bool onlyActive = true)
         {
             var car = _carService.GetCar(userId, id, onlyActive);
 
@@ -52,14 +56,16 @@ namespace DriverExpansesTracker.API.Controllers
                 return NotFound();
             }
 
+            await _linksService.AddLinksAsync(car);
+            
             return Ok(car);
         }
 
 
 
-        [HttpPost()]
+        [HttpPost(Name = Constants.RouteNames.CreateCar)]
         [ValidateModelFilter]
-        public IActionResult CreateCar([FromBody] CarForCreationDto carFromBody, string userId)
+        public async Task<IActionResult> CreateCar([FromBody] CarForCreationDto carFromBody, string userId)
         {
             if (!_userService.UserExists(userId))
             {
@@ -68,10 +74,12 @@ namespace DriverExpansesTracker.API.Controllers
 
             var carToRetrun = _carService.AddCar(carFromBody, userId);
 
+            await _linksService.AddLinksAsync(carToRetrun);
+
             return CreatedAtRoute(Constants.RouteNames.GetCar, new { userId = userId, id = carToRetrun.Id }, carToRetrun);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name =Constants.RouteNames.ChangeStatusToInactive)]
 
         public IActionResult ChangeStatusToInactive(string userId, int id)
         {
@@ -86,7 +94,7 @@ namespace DriverExpansesTracker.API.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}",Name = Constants.RouteNames.PartiallyUpdateCar)]
 
         public IActionResult PartiallyUpdateCar(string userId, int id,[FromBody] JsonPatchDocument<CarForUpdateDto> patchDoc)
         {

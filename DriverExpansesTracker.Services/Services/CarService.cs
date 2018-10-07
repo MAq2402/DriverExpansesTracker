@@ -33,7 +33,7 @@ namespace DriverExpansesTracker.Services.Services
             return Mapper.Map<CarDto>(carToSave);
         }
 
-        public bool CarExists(string userId, int carId,bool onlyActive)//Need test
+        public bool CarExists(string userId, int carId,bool onlyActive)
         {
             if (onlyActive)
             {
@@ -47,11 +47,11 @@ namespace DriverExpansesTracker.Services.Services
     
         }
 
-        public void ChangeToInactive(string userId, int id) // Need test
+        public void ChangeToInactive(string userId, int id) 
         {
             var car = _carRepository.FindSingleBy(x => x.UserId == userId && x.Id == id && x.Active);
 
-            car.Active = false;
+            car.Disactivate();
 
             if (!_carRepository.Save())
             {

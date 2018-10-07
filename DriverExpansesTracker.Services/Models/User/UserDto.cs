@@ -1,10 +1,11 @@
-﻿using System;
+﻿using RiskFirst.Hateoas.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DriverExpansesTracker.Services.Models.User
 {
-    public class UserDto
+    public class UserDto : LinkContainer
     {
         public string Id { get; set; }
         public string FirstName { get; set; }

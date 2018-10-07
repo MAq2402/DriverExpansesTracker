@@ -9,6 +9,7 @@ using DriverExpansesTracker.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using RiskFirst.Hateoas;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,7 +17,7 @@ namespace DriverExpansesTracker.API.Controllers
 {
     [Route("api/users/{userId}")]
     [EnableCors("MyPolicy")]
-    [Authorize(Policy ="User")]
+    [Authorize(Policy = "User")]
     [ValidateAuthorizedUserFilter]
     public class PaymentsController : BaseController
     {
@@ -25,11 +26,12 @@ namespace DriverExpansesTracker.API.Controllers
         private IJourneyService _journeyService;
         private ICarService _carService;
 
-        public PaymentsController(IUserService userService, 
+        public PaymentsController(IUserService userService,
                                   IPaymentService paymentService,
                                   IJourneyService journeyService,
                                   IUrlHelper urlHelper,
-                                  ICarService carService):base(urlHelper)
+                                  ICarService carService,
+                                  ILinksService linksService) : base(urlHelper, linksService)
         {
             _userService = userService;
             _paymentService = paymentService;
@@ -37,81 +39,80 @@ namespace DriverExpansesTracker.API.Controllers
             _carService = carService;
         }
 
-        [HttpGet]
-        [Route("payments",Name = Constants.RouteNames.GetPayments)]
-        [Route("journeys/{journeyId}/payments" , Name = Constants.RouteNames.GetPaymentsByJourney)]
-        public IActionResult GetPayments(string userId,int ?journeyId, int?carId,ResourceParameters resourceParameters)
+        [HttpGet("payments", Name = Constants.RouteNames.GetPayments)]
+
+        public async Task<IActionResult> GetPayments(string userId, ResourceParameters resourceParameters)
         {
-            if (journeyId.HasValue)
+            if (!_userService.UserExists(userId))
             {
-                if(!_journeyService.JourneyExists(userId,journeyId.Value))
-                {
-                    return NotFound();
-                }
-                var pagedPayments = _paymentService.GetPagedPaymentsByJourneys(userId, journeyId.Value, resourceParameters);
-
-                pagedPayments.Header.PreviousPageLink = pagedPayments.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetPaymentsByJourney, resourceParameters,ResourceUriType.PreviousPage) : null;
-                pagedPayments.Header.PreviousPageLink = pagedPayments.HasNext ? CreateResourceUri(Constants.RouteNames.GetPaymentsByJourney, resourceParameters, ResourceUriType.NextPage) : null;
-
-                Response.Headers.Add(Constants.Headers.XPagination, pagedPayments.Header.ToJson());
-
-                return Ok(pagedPayments.ToList());
+                return NotFound();
             }
-            else
-            {
-                if (!_userService.UserExists(userId))
-                {
-                    return NotFound();
-                }
-                var pagedPayments = _paymentService.GetPagedPayments(userId, resourceParameters);
+            var pagedPayments = _paymentService.GetPagedPayments(userId, resourceParameters);
 
-                pagedPayments.Header.PreviousPageLink = pagedPayments.HasPrevious ? CreateResourceUri(Constants.RouteNames.GetPayments, resourceParameters, ResourceUriType.PreviousPage) : null;
-                pagedPayments.Header.NextPageLink = pagedPayments.HasNext ? CreateResourceUri(Constants.RouteNames.GetPayments, resourceParameters, ResourceUriType.NextPage) : null;
+            AddPaginationHeader(pagedPayments, Constants.RouteNames.GetPayments, resourceParameters);
 
-                Response.Headers.Add(Constants.Headers.XPagination, pagedPayments.Header.ToJson());
+            await AddLinksToCollectionAsync(pagedPayments);
 
-                return Ok(pagedPayments.ToList());
-            }
+            return Ok(pagedPayments);
         }
 
-        [HttpGet]
-        [Route("payments/{id}")]
-        [Route("journeys/{journeyId}/payments/{id}")]
-        public IActionResult GetPayment(string userId, int id,int? journeyId)
+        [HttpGet("journeys/{journeyId}/payments", Name = Constants.RouteNames.GetPaymentsByJourney)]
+        public async Task<IActionResult> GetPaymentsByJourney(string userId, int journeyId, ResourceParameters resourceParameters)
+        {
+            if (!_journeyService.JourneyExists(userId, journeyId))
+            {
+                return NotFound();
+            }
+            var pagedPayments = _paymentService.GetPagedPaymentsByJourneys(userId, journeyId, resourceParameters);
+
+            AddPaginationHeader(pagedPayments, Constants.RouteNames.GetPaymentsByJourney, resourceParameters);
+
+            await AddLinksToCollectionAsync(pagedPayments);
+
+            return Ok(pagedPayments);
+        }
+
+
+        [HttpGet("payments/{id}", Name = Constants.RouteNames.GetPayment)]
+
+        public async  Task<IActionResult> GetPayment(string userId, int id)
         {
 
-            if (journeyId.HasValue)
+            if (!_userService.UserExists(userId))
             {
-                if (!_journeyService.JourneyExists(userId, journeyId.Value))
-                {
-                    return NotFound();
-                }
-
-                var payment = _paymentService.GetPayment(userId, journeyId.Value,id);
-
-                if (payment == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(payment);
+                return NotFound();
             }
-            else
+
+            var payment = _paymentService.GetPayment(userId, id);
+
+            if (payment == null)
             {
-                if (!_userService.UserExists(userId))
-                {
-                    return NotFound();
-                }
+                return NotFound();
+            }
 
-                var payment = _paymentService.GetPayment(userId, id);
+            await _linksService.AddLinksAsync(payment);
 
-                if (payment == null)
-                {
-                    return NotFound();
-                }
+            return Ok(payment);
+        }
 
-                return Ok(payment);
-            }   
+        [HttpGet("journeys/{journeyId}/payments/{id}", Name =Constants.RouteNames.GetPaymentByJourney)]
+        public async Task<IActionResult> GetPaymentByJourney(string userId, int id, int journeyId)
+        {
+            if (!_journeyService.JourneyExists(userId, journeyId))
+            {
+                return NotFound();
+            }
+
+            var payment = _paymentService.GetPayment(userId, journeyId, id);
+
+            if (payment == null)
+            {
+                return NotFound();
+            }
+
+            await _linksService.AddLinksAsync(payment);
+
+            return Ok(payment);
         }
     }
 }
