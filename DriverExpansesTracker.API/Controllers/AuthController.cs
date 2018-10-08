@@ -9,6 +9,9 @@ using DriverExpansesTracker.API.Helpers;
 using DriverExpansesTracker.API.Infrastructure;
 using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Services.Models.User;
+using DriverExpansesTracker.Services.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,12 +29,14 @@ namespace DriverExpansesTracker.API.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
+        private readonly IAuthService _authService;
 
-        public AuthController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
+        public AuthController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions,IAuthService authService)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
+            _authService = authService;
         }
         [HttpPost("login")]
         [ValidateModelFilter]
@@ -66,6 +71,19 @@ namespace DriverExpansesTracker.API.Controllers
             }
 
             return await Task.FromResult<ClaimsIdentity>(null);
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        [ValidateIfUserIsNotLoggedOut]
+
+        public async Task<IActionResult> Logout()
+        {
+            var token = await HttpContext.GetTokenAsync("access_token");//Result
+
+            _authService.AddToken(token);
+
+            return NoContent();
         }
     }
 }

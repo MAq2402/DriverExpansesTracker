@@ -125,6 +125,7 @@ namespace DriverExpansesTracker.API
             services.AddScoped<IJourneyService, JourneyService>();
             services.AddScoped<IPassengerRouteService, PassengerRouteService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddCors(o => o.AddPolicy("MyPolicy", b =>
                 b.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod())
@@ -132,6 +133,7 @@ namespace DriverExpansesTracker.API
 
 
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUrlHelper, UrlHelper>(implementationFactory =>
             {
                 var actionContext = implementationFactory.GetService<IActionContextAccessor>().ActionContext;
@@ -139,10 +141,6 @@ namespace DriverExpansesTracker.API
             });
 
             services.AddHateoas();
-
-            
-            
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -166,9 +164,6 @@ namespace DriverExpansesTracker.API
                     });
                 });
             }
-
-
-
 
             AutoMapperConfiguration.Configure();
 

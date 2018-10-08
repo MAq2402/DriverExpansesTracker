@@ -19,5 +19,6 @@ namespace DriveTracker.DbContexts
         public DbSet<Journey> Journeys { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<PassengerRoute> PassengerRoutes { get; set; }
+        public DbSet<ExpiredToken> ExpiredTokens { get; set; }
     }
 }

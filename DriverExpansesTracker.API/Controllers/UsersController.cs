@@ -22,6 +22,7 @@ namespace DriverExpansesTracker.API.Controllers
     [Route("api/users")]
     [EnableCors("MyPolicy")]
     [Authorize(Policy = "User")]
+    
 
     public class UsersController : BaseController
     {
@@ -34,6 +35,7 @@ namespace DriverExpansesTracker.API.Controllers
             _userService = userService;
         }
         [HttpGet(Name =Constants.RouteNames.GetUsers)]
+        [ValidateIfUserIsNotLoggedOut]
         public async Task<IActionResult> GetUsers(ResourceParameters resourceParameters)
         {
             var pagedUsers = _userService.GetPagedUsers(resourceParameters);
@@ -45,6 +47,7 @@ namespace DriverExpansesTracker.API.Controllers
             return Ok(pagedUsers);
         }
         [HttpGet("byName/{userName}", Name = Constants.RouteNames.GetUserByName)]
+        [ValidateIfUserIsNotLoggedOut]
         public async Task<IActionResult> GetUserByName(string userName)
         {
             var user = _userService.GetUserByName(userName);
@@ -60,6 +63,7 @@ namespace DriverExpansesTracker.API.Controllers
         }
 
         [HttpGet("{id}", Name = Constants.RouteNames.GetUserById)]
+        [ValidateIfUserIsNotLoggedOut]
         public async Task<IActionResult> GetUserById(string id)
         {
             var user = _userService.GetUserById(id);
@@ -96,6 +100,7 @@ namespace DriverExpansesTracker.API.Controllers
         }
 
         [HttpGet("currentIdentity")]
+        [ValidateIfUserIsNotLoggedOut]
         public IActionResult GetCurrentIdentity()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
