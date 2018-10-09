@@ -8,16 +8,16 @@ namespace DriverExpansesTracker.Services.Models.Journey
 {
     public class JourneyForCreationDto
     {
-        [Required]
+        [Required(ErrorMessage = "Nie podano celu podróży")]
         public string Destination { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Nie podano miejsca rozpoczęcia podróży")]
         public string Start { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Nie podano długości podróży")]
         public int Length { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Nie podano ceny za litr paliwa")]
         public decimal PriceForLiter { get; set; }
         public ICollection<PassengerRouteForCreationDto> Routes { get; set; } = new List<PassengerRouteForCreationDto>();
     }

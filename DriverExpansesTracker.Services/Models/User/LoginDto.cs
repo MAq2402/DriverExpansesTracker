@@ -7,9 +7,9 @@ namespace DriverExpansesTracker.Services.Models.User
 {
     public class LoginDto
     {
-        [Required]
+        [Required(ErrorMessage = "Nie podano nazwy użytkownika")]
         public string UserName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Nie podano hasła")]
         public string Password { get; set; }
     }
 }
