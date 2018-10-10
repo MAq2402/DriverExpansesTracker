@@ -13,14 +13,14 @@ namespace DriverExpansesTracker.Repository.Entities
     public class Car:Entity
     {
         [ForeignKey("User")]
-        public string UserId { get; set; }
+        public string UserId { get; private set; }
 
         [Required]
-        public User User { get; set; }
-        public string Name { get; set; }
-        public double FuelConsumption100km { get; set; }
-        public List<Journey> Journeys { get; set; } = new List<Journey>();
-        public FuelType FuelType { get; set; }
+        public User User { get; private set; }
+        public string Name { get; private set; }
+        public double FuelConsumption100km { get; private set; }
+        public List<Journey> Journeys { get; private set; } = new List<Journey>();
+        public FuelType FuelType { get; private set; }
         public bool Active { get; private set; } = true;
 
         public void Disactivate()
@@ -31,6 +31,41 @@ namespace DriverExpansesTracker.Repository.Entities
             }
 
             Active = false;
+        }
+
+        private Car()
+        {
+
+        }
+
+
+        public Car(string userId,string name, double fuelConsumption100km, FuelType fuelType)
+        {
+            UserId = userId;
+            FuelType = FuelType;
+
+            SetName(name);
+            SetFuelConsumption(fuelConsumption100km);
+        }
+
+        private void SetFuelConsumption(double fuelConsumption100km)
+        {
+            if(fuelConsumption100km < 0)
+            {
+                throw new ArgumentException("Fuel consumption is less than 0");
+            }
+
+            FuelConsumption100km = fuelConsumption100km;
+        }
+
+        private void SetName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("Car name is null or empty");
+            }
+
+            Name = name;
         }
 
     }

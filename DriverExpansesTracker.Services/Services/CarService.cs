@@ -20,8 +20,9 @@ namespace DriverExpansesTracker.Services.Services
 
         public CarDto AddCar(CarForCreationDto car, string userId)
         {
+            car.UserId = userId;
+
             var carToSave = Mapper.Map<Car>(car);
-            carToSave.UserId = userId;
 
             _carRepository.Add(carToSave);
 
