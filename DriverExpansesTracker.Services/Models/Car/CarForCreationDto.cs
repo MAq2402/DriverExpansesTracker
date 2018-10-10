@@ -12,10 +12,13 @@ namespace DriverExpansesTracker.Services.Models.Car
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Nie podano spalania")]
+        [Range(double.Epsilon,double.MaxValue,ErrorMessage ="Spalanie musi mieć wartośc powyżej 0")]
         public double FuelConsumption100km { get; set; }
 
         [Required(ErrorMessage = "Nie podano typu paliwa")]
         public FuelType FuelType { get; set; }
+
+        public string UserId { get; set; }
 
     }
 }

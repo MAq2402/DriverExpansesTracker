@@ -14,7 +14,6 @@ namespace DriverExpansesTracker.Repository.Entities
     {
         [ForeignKey("User")]
         public string UserId { get; private set; }
-
         [Required]
         public User User { get; private set; }
         public string Name { get; private set; }
@@ -22,6 +21,11 @@ namespace DriverExpansesTracker.Repository.Entities
         public List<Journey> Journeys { get; private set; } = new List<Journey>();
         public FuelType FuelType { get; private set; }
         public bool Active { get; private set; } = true;
+
+        private Car()
+        {
+
+        }
 
         public void Disactivate()
         {
@@ -31,11 +35,6 @@ namespace DriverExpansesTracker.Repository.Entities
             }
 
             Active = false;
-        }
-
-        private Car()
-        {
-
         }
 
 
