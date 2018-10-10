@@ -13,7 +13,7 @@ namespace DriverExpansesTracker.Services.Models.Journey
 
         public string Start { get; set; }
 
-        public int Length { get; set; }
+        public double Length { get; set; }
 
         public int CarId { get; set; }
         public string UserId { get; set; }

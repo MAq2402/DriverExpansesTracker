@@ -15,10 +15,14 @@ namespace DriverExpansesTracker.Services.Models.Journey
         public string Start { get; set; }
 
         [Required(ErrorMessage = "Nie podano długości podróży")]
-        public int Length { get; set; }
+        public double Length { get; set; }
 
         [Required(ErrorMessage = "Nie podano ceny za litr paliwa")]
         public decimal PriceForLiter { get; set; }
+
+        public int CarId { get; set; }
+
+        public string UserId { get; set; }
         public ICollection<PassengerRouteForCreationDto> Routes { get; set; } = new List<PassengerRouteForCreationDto>();
     }
 }

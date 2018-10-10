@@ -44,6 +44,10 @@ namespace DriverExpansesTracker.Services.Services
 
         public Journey AddJourney(string userId, JourneyForCreationDto journey,CarDto car)
         {
+            journey.UserId = userId;
+
+            journey.CarId = car.Id;
+
             var journeyToSave = Mapper.Map<Journey>(journey);
 
             if (car == null)
@@ -55,9 +59,7 @@ namespace DriverExpansesTracker.Services.Services
 
             journeyToSave.PassengerRoutes.ForEach(pr => pr.Destination = journeyToSave.Destination);
             
-            journeyToSave.UserId = userId;
-
-            journeyToSave.CarId = car.Id;
+          
 
             _journeyRepository.Add(journeyToSave);
 
@@ -76,7 +78,7 @@ namespace DriverExpansesTracker.Services.Services
 
         public void SetTotalPrices(Journey journey, double fuelConsumption100Km, decimal priceForLiter)
         {
-            journey.TotalPrice = Convert.ToDecimal(fuelConsumption100Km * journey.Length * (double)priceForLiter / 100);
+            journey.SetTotalPrice(fuelConsumption100Km, priceForLiter);
 
             var listOfRoutes = journey.PassengerRoutes.OrderBy(pr => pr.Length).ToList();
 
