@@ -19,6 +19,7 @@ namespace DriverExpansesTracker.API.Controllers
     [EnableCors("MyPolicy")]
     [Authorize(Policy = "User")]
     [ValidateAuthorizedUserFilter]
+    [ValidateIfUserIsNotLoggedOut]
     public class PaymentsController : BaseController
     {
         private IUserService _userService;

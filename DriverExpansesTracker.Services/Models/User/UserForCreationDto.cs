@@ -7,16 +7,16 @@ namespace DriverExpansesTracker.Services.Models.User
 {
     public class UserForCreationDto
     {
-        [Required]
+        [Required(ErrorMessage = "Nie podano imienia")]
         public string FirstName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Nie podano nazwiska")]
         public string LastName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Nie podano nazwy użytkownika")]
         public string UserName { get; set; }
 
-        [Required, DataType(DataType.Password)]
+        [Required(ErrorMessage = "Nie wprowadzono hasła"), DataType(DataType.Password)]
         public string Password { get; set; }
-        [Required, DataType(DataType.Password), Compare("Password")]
+        [Required(ErrorMessage = "Potwierdź hasło"), DataType(DataType.Password), Compare("Password",ErrorMessage ="Hasła nie są takie same")]
         public string ConfirmPassword { get; set; }
     }
 }

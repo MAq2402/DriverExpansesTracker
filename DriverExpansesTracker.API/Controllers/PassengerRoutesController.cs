@@ -18,6 +18,7 @@ namespace DriverExpansesTracker.API.Controllers
     [EnableCors("MyPolicy")]
     [Authorize(Policy = "User")]
     [ValidateAuthorizedUserFilter]
+    [ValidateIfUserIsNotLoggedOut]
     public class PassengerRoutesController : BaseController
     {
         private IPassengerRouteService _passengerRouteService;

@@ -8,13 +8,13 @@ namespace DriverExpansesTracker.Services.Models.Car
 {
     public class CarForCreationDto
     {
-        [Required]
+        [Required(ErrorMessage = "Nie podano nazwy dla samochodu")]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Nie podano spalania")]
         public double FuelConsumption100km { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Nie podano typu paliwa")]
         public FuelType FuelType { get; set; }
 
     }
