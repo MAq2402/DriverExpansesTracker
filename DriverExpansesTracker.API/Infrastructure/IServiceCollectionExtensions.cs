@@ -33,7 +33,7 @@ namespace DriverExpansesTracker.API.Infrastructure
                           .RequireRoutedLink("all", Constants.RouteNames.GetCars)
                           .RequireRoutedLink("create", Constants.RouteNames.CreateCar)
                           .RequireRoutedLink("patch", Constants.RouteNames.PartiallyUpdateCar, x => new { id = x.Id })
-                          .RequireRoutedLink("delete", Constants.RouteNames.ChangeStatusToInactive, x => new { id = x.Id });
+                          .RequireRoutedLink("delete", Constants.RouteNames.ChangeStatusToInactive, x => new { id = x.Id },condition=>condition.Assert(x=>x.Active));
                 });
 
                 config.AddPolicy<JourneyDto>(policy =>
@@ -53,7 +53,8 @@ namespace DriverExpansesTracker.API.Infrastructure
                     policy.RequireRoutedLink("get", Constants.RouteNames.GetPayment, x => new { id = x.Id })
                           .RequireRoutedLink("all", Constants.RouteNames.GetPayments)
                           .RequireRoutedLink("all-by-journey", Constants.RouteNames.GetPaymentsByJourney, x => new { journeyId = x.JourneyId })
-                          .RequireRoutedLink("get-by-joruney", Constants.RouteNames.GetPaymentByJourney, x => new { journeyId = x.JourneyId, id = x.Id });
+                          .RequireRoutedLink("get-by-joruney", Constants.RouteNames.GetPaymentByJourney, x => new { journeyId = x.JourneyId, id = x.Id })
+                          .RequireRoutedLink("accept", Constants.RouteNames.AcceptPayment, x => new { id = x.Id },condition=>condition.Assert(x=>!x.IsPayed));
                 });
 
                 config.AddPolicy<PassengerRouteDto>(policy =>

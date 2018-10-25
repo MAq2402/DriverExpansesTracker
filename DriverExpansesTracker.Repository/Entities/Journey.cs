@@ -10,34 +10,63 @@ namespace DriverExpansesTracker.Repository.Entities
 {
     public class Journey:Entity
     {
-        public Journey()
+        public string Destination { get; private set; }
+
+        public string Start { get; private set; }
+
+        public double Length { get; private set; }
+
+        [ForeignKey("Car")]
+        public int CarId { get; private set; }
+
+        [Required]
+        public Car Car { get; private set; }
+        public List<PassengerRoute> PassengerRoutes { get; private set; } = new List<PassengerRoute>();
+
+        [ForeignKey("User")]
+        public string UserId { get; private set; }
+
+        [Required]
+        public User User { get; private set; }
+
+        public DateTime DateTime { get; private set; }
+
+        public decimal TotalPrice { get; private set; }
+
+        private Journey()
         {
             DateTime = DateTime.Now;
         }
 
-        public string Destination { get; set; }
+        public Journey(string destination, string start, double length, int carId,string userId)
+        {
+            DateTime = DateTime.Now;
+            CarId = carId;
+            UserId = userId;
 
-        public string Start { get; set; }
+            SetDestination(destination);
+            SetStart(start);
+            SetLength(length);
+        }
 
-        public int Length { get; set; }
+        public void SetTotalPrice(double fuelConsumption100Km, decimal priceForLiter)
+        {
+            TotalPrice = Convert.ToDecimal(fuelConsumption100Km * Length * (double)priceForLiter / 100);
+        }
 
-        [ForeignKey("Car")]
-        public int CarId { get; set; }
+        private void SetLength(double length)
+        {
+            Length = length;
+        }
 
-        [Required]
-        public Car Car { get; set; }
-        public List<PassengerRoute> PassengerRoutes { get; set; } = new List<PassengerRoute>();
+        private void SetStart(string start)
+        {
+            Start = start;
+        }
 
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-
-        [Required]
-        public User User { get; set; }
-
-        public DateTime DateTime { get; set; }
-
-        public decimal TotalPrice { get; set; }
-
-
+        private void SetDestination(string destination)
+        {
+            Destination = destination;
+        }
     }
 }

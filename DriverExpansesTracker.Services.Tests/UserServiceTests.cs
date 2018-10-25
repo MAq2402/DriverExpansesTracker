@@ -22,40 +22,28 @@ namespace DriverExpansesTracker.Services.Tests
         {
             collection = new List<User>()
             {
-                new User
+                new User("Michał","Miciak")
                 {
-                    UserName = "MAq",
-                    FirstName = "Michał",
-                    LastName = "Miciak"
+                    UserName = "MAq"
                 },
-                new User
+                new User("Jan","Kowalski")
                 {
-                    UserName = "kowal",
-                    FirstName = "Jan",
-                    LastName = "Kowalski"
+                    UserName = "kowal"
                 },
-                new User
+                new User("Adrian","Nowak")
                 {
-                    UserName = "adi",
-                    FirstName = "Adrian",
-                    LastName = "Nowak"
-                }, new User
+                    UserName = "adi"
+                }, new User("Michał","Zembiński")
                 {
-                    UserName = "trol",
-                    FirstName = "Michał",
-                    LastName = "Zembiński"
+                    UserName = "trol"
                 },
-                new User
+                new User("Wojtek","Michalski")
                 {
-                    UserName = "xD",
-                    FirstName = "Wojtek",
-                    LastName = "Michalski"
+                    UserName = "xD"
                 },
-                new User
+                new User("Michalina","Wojtkowska")
                 {
-                    UserName = "michalwojtekkowal",
-                    FirstName = "Michalina",
-                    LastName = "Wojtkowska"
+                    UserName = "michalwojtekkowal"
                 }
             };
 

@@ -3,6 +3,7 @@ using DriverExpansesTracker.Repository.Entities;
 using DriverExpansesTracker.Repository.Repositories;
 using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.Payment;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,13 @@ namespace DriverExpansesTracker.Services.Services
     public class PaymentService : IPaymentService
     {
         private IRepository<Payment> _paymentRepository;
+        private IRepository<User> _userRepository;
 
-        public PaymentService(IRepository<Payment> paymentRepository)
+        public PaymentService(IRepository<Payment> paymentRepository,IRepository<User> userRepository)
         {
             _paymentRepository = paymentRepository;
+            _userRepository = userRepository;
+            
         }
 
         public PaymentDto GetPayment(string userId, int id)
@@ -50,13 +54,8 @@ namespace DriverExpansesTracker.Services.Services
 
             foreach (var route in routes)
             {
-                var payment = new Payment
-                {
-                    ReceiverId = journey.UserId,
-                    PayerId = route.UserId,
-                    JourneyId = journey.Id,
-                    Amount = route.TotalPrice,
-                };
+                var payment = new Payment(route.UserId, journey.UserId, journey.Id, route.TotalPrice);
+
                 payments.Add(payment);
             }
 
@@ -78,6 +77,42 @@ namespace DriverExpansesTracker.Services.Services
             var paymentsDtos = Mapper.Map<IEnumerable<PaymentDto>>(paymentsFromRepo);
 
             return new PagedList<PaymentDto>(paymentsDtos.AsQueryable(), resourceParameters.PageNumber, resourceParameters.PageSize);
+        }
+
+        public void AcceptPayment(PaymentDto paymentToAcceptDto)
+        {
+            var paymentToAccept = _paymentRepository.FindSingleBy(p => p.Id == paymentToAcceptDto.Id);
+
+            paymentToAccept.AcceptPayment();
+
+            var receiver = _userRepository.FindBy(u => u.Id == paymentToAccept.ReceiverId)
+                                          .Include(u => u.ReceivedPayments)
+                                          .Include(u => u.PayedPayments)
+                                          .FirstOrDefault();
+
+            if (receiver == null)
+            {
+                throw new ArgumentException("Could not find receiver");
+            }
+
+
+            var payer = _userRepository.FindBy(u => u.Id == paymentToAccept.PayerId)
+                                          .Include(u => u.ReceivedPayments)
+                                          .Include(u => u.PayedPayments)
+                                          .FirstOrDefault();
+            if (payer == null)
+            {
+                throw new ArgumentException("Could not find payer");
+            }
+
+            receiver.UpdatePayments();
+            payer.UpdatePayments();
+
+            if (!_paymentRepository.Save())
+            {
+                throw new Exception("Could not accept payment");
+            }
+                                  
         }
     }
 }

@@ -44,6 +44,7 @@ namespace DriverExpansesTracker.API
             public const string CreateUser = "CreateUser";
             public const string GetPaymentByJourney = "GetPaymentByJourney";
             public const string GetPayment = "GetPayment";
+            public const string AcceptPayment = "AcceptPayment";
         }
 
         public static class Headers

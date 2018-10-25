@@ -115,5 +115,20 @@ namespace DriverExpansesTracker.API.Controllers
 
             return Ok(payment);
         }
+        [HttpPost("payments/{id}/accept",Name = Constants.RouteNames.AcceptPayment)]
+
+        public IActionResult AcceptPayment(string userId, int id)
+        {
+            var paymentToAccept = _paymentService.GetPayment(userId, id);
+
+            if(paymentToAccept == null)
+            {
+                return NotFound();
+            }
+
+            _paymentService.AcceptPayment(paymentToAccept);
+
+            return NoContent();
+        }
     }
 }
