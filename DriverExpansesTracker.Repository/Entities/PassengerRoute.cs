@@ -30,7 +30,7 @@ namespace DriverExpansesTracker.Repository.Entities
         public decimal TotalPrice { get; private set; }
         public DateTime DateTime { get; private set; }
 
-        public PassengerRoute(string destination, string start, int length, string userId, int journeyId, decimal totalPrice)
+        public PassengerRoute(string destination, string start, int length, string userId, int journeyId)
         {
             UserId = userId;
             JourneyId = journeyId;

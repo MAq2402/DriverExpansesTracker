@@ -11,6 +11,11 @@ namespace DriverExpansesTracker.Services.Tests
 {
     public class PaymentServiceTests
     {
+        private Mock<IRepository<User>> mockedUserRepository;
+        public PaymentServiceTests()
+        {
+            mockedUserRepository = new Mock<IRepository<User>>();
+        }
         [Fact]
         public void AddPaymentsTestShouldThrowException()
         {
@@ -19,9 +24,9 @@ namespace DriverExpansesTracker.Services.Tests
 
             mockedPaymentRepository.Setup(r => r.Save()).Returns(false);
 
-            var journey = new Journey();
+            var journey = new Journey("mock","mock",1,1,"mock");
 
-            var paymentService = new PaymentService(mockedPaymentRepository.Object);
+            var paymentService = new PaymentService(mockedPaymentRepository.Object,mockedUserRepository.Object);
 
             //Act
             Action action = () => paymentService.AddPayments(journey);
@@ -39,9 +44,9 @@ namespace DriverExpansesTracker.Services.Tests
 
             mockedPaymentRepository.Setup(r => r.Save()).Returns(true);
 
-            var journey = new Journey();
+            var journey = new Journey("mock", "mock", 1, 1, "mock");
 
-            var paymentService = new PaymentService(mockedPaymentRepository.Object);
+            var paymentService = new PaymentService(mockedPaymentRepository.Object, mockedUserRepository.Object);
 
             //Act
             var result = paymentService.AddPayments(journey);
@@ -54,31 +59,26 @@ namespace DriverExpansesTracker.Services.Tests
 
         public void AddPaymentsTest_2()
         {
-            //Assert
+            //Arrange
             var mockedPaymentRepository = new Mock<IRepository<Payment>>();
 
             mockedPaymentRepository.Setup(r => r.Save()).Returns(true);
 
-            var journey = new Journey();
+            var journey = new Journey("mock", "mock", 1, 1, "mock");
 
-            var ps1 = new PassengerRoute
-            {
-                TotalPrice = 50
-            };
-            var ps2 = new PassengerRoute
-            {
-                TotalPrice = 100
-            };
-            var ps3 = new PassengerRoute
-            {
-                TotalPrice = 150
-            };
+            var ps1 = new PassengerRoute("mock", "mock", 1, "mock", 1);
+            var ps2 = new PassengerRoute("mock", "mock", 1, "mock", 1);
+            var ps3 = new PassengerRoute("mock", "mock", 1, "mock", 1);
+
+            ps1.SetTotalPrice(50);
+            ps2.SetTotalPrice(100);
+            ps3.SetTotalPrice(150);
 
             journey.PassengerRoutes.Add(ps1);
             journey.PassengerRoutes.Add(ps2);
             journey.PassengerRoutes.Add(ps3);
 
-            var paymentService = new PaymentService(mockedPaymentRepository.Object);
+            var paymentService = new PaymentService(mockedPaymentRepository.Object, mockedUserRepository.Object);
 
             //Act
             var actual = paymentService.AddPayments(journey);
