@@ -4,6 +4,7 @@ using DriverExpansesTracker.Repository.Repositories;
 using DriverExpansesTracker.Services.Helpers;
 using DriverExpansesTracker.Services.Models.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,24 +39,33 @@ namespace DriverExpansesTracker.Services.Services
 
         public void EditUsersPaymentStatistics(string receiverId, IEnumerable<Payment> payments)
         {
-            var receiver = _userRepository.FindSingleBy(u=>u.Id==receiverId);
+
+            var receiver = _userRepository.FindBy(u => u.Id == receiverId)
+                                          .Include(u => u.ReceivedPayments)
+                                          .Include(u => u.PayedPayments)
+                                          .FirstOrDefault();
 
             if (receiver == null)
             {
                 throw new ArgumentNullException("Receiver does not exist");
             }
 
-            receiver.ToReceive = payments.Sum(p => p.Amount);
+            receiver.UpdatePayments();
 
             foreach (var payment in payments)
             {
-                var payer = _userRepository.FindSingleBy(u=>u.Id==payment.PayerId);
+                var payer = _userRepository.FindBy(u => u.Id == payment.PayerId)
+                                           .Include(u => u.ReceivedPayments)
+                                           .Include(u => u.PayedPayments)
+                                           .FirstOrDefault();
                 if (payer == null)
                 {
                     throw new ArgumentNullException("Payer does not exist");
                 }
-                payer.ToPay = payment.Amount;
+                payer.UpdatePayments();
             }
+
+            _userRepository.Save();
         }
 
 

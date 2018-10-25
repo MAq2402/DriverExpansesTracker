@@ -115,5 +115,12 @@ namespace DriverExpansesTracker.API.Controllers
 
             return Ok(payment);
         }
+        //[HttpPost("{id}")]
+
+        //public IActionResult AcceptPayment(string userId,int id)
+        //{
+             //Payed =true
+             //UpdatePaymentsStatistics
+        //}
     }
 }

@@ -10,31 +10,52 @@ namespace DriverExpansesTracker.Repository.Entities
 {
     public class Payment:Entity
     {
-        public Payment()
-        {
-            DateTime = DateTime.Now;
-        }
+        
 
         [ForeignKey("Payer")]
-        public string PayerId { get; set; }
+        public string PayerId { get; private set; }
 
         [Required]
-        public User Payer { get; set; }
+        public User Payer { get; private set; }
 
         [ForeignKey("Receiver")]
-        public string ReceiverId { get; set; }
+        public string ReceiverId { get; private set; }
 
         [Required]
-        public User Receiver { get; set; }
+        public User Receiver { get; private set; }
 
         [ForeignKey("Journey")]
-        public int JourneyId { get; set; }
+        public int JourneyId { get; private set; }
 
         [Required]
-        public Journey Journey { get; set; }
-        public decimal Amount { get; set; }
-        public DateTime DateTime { get; set; }
-        public bool IsPayed { get; set; } = false;
+        public Journey Journey { get; private set; }
+        public decimal Amount { get; private set; }
+        public DateTime DateTime { get; private set; }
+        public bool IsPayed { get; private set; } = false;
 
+        private Payment()
+        {
+
+        }
+
+        public Payment(string payerId,string receiverId, int journeyId, decimal amount )
+        {
+            PayerId = payerId;
+            ReceiverId = receiverId;
+            JourneyId = journeyId;
+            DateTime = DateTime.Now;
+
+            SetAmount(amount);
+        }
+
+        private void SetAmount(decimal amount)
+        {
+            if (amount < 0)
+            {
+                throw new ArgumentException("Payment amount is less than 0");
+            }
+
+            Amount = amount;
+        }
     }
 }

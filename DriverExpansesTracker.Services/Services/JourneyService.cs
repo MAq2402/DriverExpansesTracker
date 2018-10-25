@@ -55,9 +55,7 @@ namespace DriverExpansesTracker.Services.Services
                 throw new Exception("Car does not exist");
             }
 
-            journeyToSave.PassengerRoutes.ForEach(pr => pr.DateTime = journeyToSave.DateTime);
-
-            journeyToSave.PassengerRoutes.ForEach(pr => pr.Destination = journeyToSave.Destination);
+            journeyToSave.PassengerRoutes.ForEach(pr => pr.SetDestination(journeyToSave.Destination));
             
           
 
@@ -102,7 +100,7 @@ namespace DriverExpansesTracker.Services.Services
 
                 foreach (var route in listOfRoutesWithSameLength)
                 {
-                    route.TotalPrice = currentCost;
+                    route.SetTotalPrice(currentCost);
                 }
 
                 i += listOfRoutesWithSameLength.Count();

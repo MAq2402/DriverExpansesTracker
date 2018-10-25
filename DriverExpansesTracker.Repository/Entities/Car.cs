@@ -49,7 +49,7 @@ namespace DriverExpansesTracker.Repository.Entities
 
         private void SetFuelConsumption(double fuelConsumption100km)
         {
-            if(fuelConsumption100km < 0)
+            if(fuelConsumption100km <= 0)
             {
                 throw new ArgumentException("Fuel consumption is less than 0");
             }

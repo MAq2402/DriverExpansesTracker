@@ -50,13 +50,8 @@ namespace DriverExpansesTracker.Services.Services
 
             foreach (var route in routes)
             {
-                var payment = new Payment
-                {
-                    ReceiverId = journey.UserId,
-                    PayerId = route.UserId,
-                    JourneyId = journey.Id,
-                    Amount = route.TotalPrice,
-                };
+                var payment = new Payment(route.UserId, journey.UserId, journey.Id, route.TotalPrice);
+
                 payments.Add(payment);
             }
 
