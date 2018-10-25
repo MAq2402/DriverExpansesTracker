@@ -36,11 +36,13 @@ namespace DriverExpansesTracker.API
 {
     public class Startup
     {
-        private const string SecretKey = "iNivDmHLpUA223sqsfhqGbMRdRj1PVkH"; // todo: get this from somewhere secure"
-        private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
+        private readonly string SecretKey;
+        private readonly SymmetricSecurityKey _signingKey;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            SecretKey = Configuration.GetValue(typeof(string), "SecretKey") as string;
+            _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
         }
 
         public IConfiguration Configuration { get; }
@@ -146,24 +148,21 @@ namespace DriverExpansesTracker.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
-            {
-                //app.UseDeveloperExceptionPage();
 
-                app.UseExceptionHandler(appBuilder =>
+            app.UseExceptionHandler(appBuilder =>
+            {
+                appBuilder.Run(async context =>
                 {
-                    appBuilder.Run(async context =>
+                    var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (exceptionHandlerFeature != null)
                     {
-                        var exceptionHandlerFeature =  context.Features.Get<IExceptionHandlerFeature>();
-                        if(exceptionHandlerFeature != null)
-                        {
-                            var logger = loggerFactory.CreateLogger("Global exception logger");
-                            logger.LogError(500, exceptionHandlerFeature.Error, exceptionHandlerFeature.Error.Message);
-                        }
-                        await context.Response.WriteAsync("An unexpected fault happend. Try again later.");
-                    });
+                        var logger = loggerFactory.CreateLogger("Global exception logger");
+                        logger.LogError(500, exceptionHandlerFeature.Error, exceptionHandlerFeature.Error.Message);
+                    }
+                    await context.Response.WriteAsync("An unexpected fault happend. Try again later.");
                 });
-            }
+            });
+
 
             AutoMapperConfiguration.Configure();
 
