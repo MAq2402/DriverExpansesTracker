@@ -101,7 +101,7 @@ namespace DriverExpansesTracker.API.Controllers
 
         [HttpGet("currentIdentity")]
         [ValidateIfUserIsNotLoggedOut]
-        public IActionResult GetCurrentIdentity()
+        public async  Task<IActionResult> GetCurrentIdentity()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
 
@@ -113,6 +113,7 @@ namespace DriverExpansesTracker.API.Controllers
                 return NoContent();
             }
 
+            await _linksService.AddLinksAsync(user);
             return Ok(user);
         }
     }

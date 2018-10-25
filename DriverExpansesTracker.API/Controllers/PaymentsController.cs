@@ -115,7 +115,7 @@ namespace DriverExpansesTracker.API.Controllers
 
             return Ok(payment);
         }
-        [HttpPost("payments/{id}/accept")]
+        [HttpPost("payments/{id}/accept",Name = Constants.RouteNames.AcceptPayment)]
 
         public IActionResult AcceptPayment(string userId, int id)
         {
