@@ -57,5 +57,15 @@ namespace DriverExpansesTracker.Repository.Entities
 
             Amount = amount;
         }
+
+        public void AcceptPayment()
+        {
+            if (IsPayed)
+            {
+                throw new ArgumentException("Payment is already payed");
+            }
+
+            IsPayed = true;
+        }
     }
 }

@@ -115,12 +115,20 @@ namespace DriverExpansesTracker.API.Controllers
 
             return Ok(payment);
         }
-        //[HttpPost("{id}")]
+        [HttpPost("payments/{id}/accept")]
 
-        //public IActionResult AcceptPayment(string userId,int id)
-        //{
-             //Payed =true
-             //UpdatePaymentsStatistics
-        //}
+        public IActionResult AcceptPayment(string userId, int id)
+        {
+            var paymentToAccept = _paymentService.GetPayment(userId, id);
+
+            if(paymentToAccept == null)
+            {
+                return NotFound();
+            }
+
+            _paymentService.AcceptPayment(paymentToAccept);
+
+            return NoContent();
+        }
     }
 }
