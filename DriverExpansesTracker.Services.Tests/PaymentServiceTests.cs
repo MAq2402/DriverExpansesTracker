@@ -66,9 +66,9 @@ namespace DriverExpansesTracker.Services.Tests
 
             var journey = new Journey("mock", "mock", 1, 1, "mock");
 
-            var ps1 = new PassengerRoute("mock", "mock", 1, "mock", 1);
-            var ps2 = new PassengerRoute("mock", "mock", 1, "mock", 1);
-            var ps3 = new PassengerRoute("mock", "mock", 1, "mock", 1);
+            var ps1 = new PassengerRoute("mock", 1, "mock", 1);
+            var ps2 = new PassengerRoute("mock", 1, "mock", 1);
+            var ps3 = new PassengerRoute("mock", 1, "mock", 1);
 
             ps1.SetTotalPrice(50);
             ps2.SetTotalPrice(100);

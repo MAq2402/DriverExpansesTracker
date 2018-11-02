@@ -47,7 +47,7 @@ namespace DriverExpansesTracker.Services.Tests
         {
             //Arrange
             var journey = new Journey("mock", "mock", 100, 1, "mock");
-            var route = new PassengerRoute("mock", "mock", 100, "mock", 1);
+            var route = new PassengerRoute("mock", 100, "mock", 1);
             journey.PassengerRoutes.Add(route);
 
             var priceForLiter = 2;
@@ -67,9 +67,9 @@ namespace DriverExpansesTracker.Services.Tests
             //Arrange
             var journey = new Journey("mock", "mockk", 100, 1, "mock");
 
-            var route1 = new PassengerRoute("mock", "mock", 100, "mock", 1);
-            var route2 = new PassengerRoute("mock", "mock", 100, "mock", 1);
-            var route3 = new PassengerRoute("mock", "mock", 100, "mock", 1);
+            var route1 = new PassengerRoute("mock", 100, "mock", 1);
+            var route2 = new PassengerRoute("mock", 100, "mock", 1);
+            var route3 = new PassengerRoute("mock", 100, "mock", 1);
 
             journey.PassengerRoutes.Add(route1);
             journey.PassengerRoutes.Add(route2);
@@ -98,9 +98,9 @@ namespace DriverExpansesTracker.Services.Tests
             //Arrange
             var journey = new Journey("mock", "mockk", 100, 1, "mock");
 
-            var route1 = new PassengerRoute("mock", "mock", 100, "mock", 1);
-            var route2 = new PassengerRoute("mock", "mock", 50, "mock", 1);
-            var route3 = new PassengerRoute("mock", "mock", 50, "mock", 1);
+            var route1 = new PassengerRoute("mock", 100, "mock", 1);
+            var route2 = new PassengerRoute("mock", 50, "mock", 1);
+            var route3 = new PassengerRoute("mock", 50, "mock", 1);
 
             journey.PassengerRoutes.Add(route1);
             journey.PassengerRoutes.Add(route2);
@@ -131,10 +131,10 @@ namespace DriverExpansesTracker.Services.Tests
             //Arrange
             var journey = new Journey("mock", "mockk", 100, 1, "mock");
 
-            var route1 = new PassengerRoute("mock", "mock", 75, "mock", 1);
-            var route2 = new PassengerRoute("mock", "mock", 50, "mock", 1);
-            var route3 = new PassengerRoute("mock", "mock", 25, "mock", 1);
-            var route4 = new PassengerRoute("mock", "mock", 10, "mock", 1);
+            var route1 = new PassengerRoute("mock", 75, "mock", 1);
+            var route2 = new PassengerRoute("mock", 50, "mock", 1);
+            var route3 = new PassengerRoute("mock", 25, "mock", 1);
+            var route4 = new PassengerRoute("mock", 10, "mock", 1);
 
             journey.PassengerRoutes.Add(route1);
             journey.PassengerRoutes.Add(route2);
