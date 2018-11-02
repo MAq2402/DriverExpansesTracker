@@ -30,7 +30,7 @@ namespace DriverExpansesTracker.Repository.Entities
         public decimal TotalPrice { get; private set; }
         public DateTime DateTime { get; private set; }
 
-        public PassengerRoute(string destination, string start, int length, string userId, int journeyId)
+        public PassengerRoute(string start, int length, string userId, int journeyId)
         {
             UserId = userId;
             JourneyId = journeyId;
@@ -39,6 +39,11 @@ namespace DriverExpansesTracker.Repository.Entities
 
             SetStart(start);
             SetLength(length);
+        }
+
+        private PassengerRoute()
+        {
+            DateTime = DateTime.Now;
         }
 
         public void SetTotalPrice(decimal totalPrice)
@@ -53,7 +58,7 @@ namespace DriverExpansesTracker.Repository.Entities
 
         private void SetLength(int length)
         {
-            if (length < 0)
+            if (length <= 0)
             {
                 throw new ArgumentException("Route length is less than 0");
             }
@@ -79,11 +84,6 @@ namespace DriverExpansesTracker.Repository.Entities
             }
 
             Destination = destination;
-        }
-
-        private PassengerRoute()
-        {
-
         }
 
     }

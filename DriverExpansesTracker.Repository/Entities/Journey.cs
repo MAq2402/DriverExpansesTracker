@@ -51,21 +51,38 @@ namespace DriverExpansesTracker.Repository.Entities
 
         public void SetTotalPrice(double fuelConsumption100Km, decimal priceForLiter)
         {
-            TotalPrice = Convert.ToDecimal(fuelConsumption100Km * Length * (double)priceForLiter / 100);
+            if(fuelConsumption100Km <= 0 || priceForLiter <= 0)
+            {
+                throw new ArgumentException();
+            }
+
+            TotalPrice = Math.Round(Convert.ToDecimal(fuelConsumption100Km * Length * (double)priceForLiter / 100),2);
         }
 
         private void SetLength(double length)
         {
+            if (length <= 0)
+            {
+                throw new ArgumentException();
+            }
             Length = length;
         }
 
         private void SetStart(string start)
         {
+            if (string.IsNullOrEmpty(start))
+            {
+                throw new ArgumentNullException();
+            }
             Start = start;
         }
 
         private void SetDestination(string destination)
         {
+            if (string.IsNullOrEmpty(destination))
+            {
+                throw new ArgumentNullException();
+            }
             Destination = destination;
         }
     }

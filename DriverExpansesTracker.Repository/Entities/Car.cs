@@ -61,7 +61,7 @@ namespace DriverExpansesTracker.Repository.Entities
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw new ArgumentException("Car name is null or empty");
+                throw new ArgumentNullException("Car name is null or empty");
             }
 
             Name = name;

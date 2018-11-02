@@ -62,7 +62,7 @@ namespace DriverExpansesTracker.Repository.Entities
         {
             if (IsPayed)
             {
-                throw new ArgumentException("Payment is already payed");
+                throw new InvalidOperationException("Payment has been already accepted");
             }
 
             IsPayed = true;
