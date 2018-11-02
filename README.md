@@ -15,8 +15,7 @@ Project is still in development. Client side has been made in Angular 6. You can
 - CRUD operations
 - 3 layers (Service, Business Logic, Data Access)
 - Unit tests for Business Logic layer using XUnit
+- Unit tests for Entites in Repository Layer using XUnit
 - [JWT](https://jwt.io), authentication, authorization
 - Paging, filtring, searching 
 - Hateoas using RiskFirst
-
-More to come soon.
